@@ -20,6 +20,12 @@
       {
         "assertionStyle": "as"
       }
+    ],
+    "@typescript-eslint/no-namespace": [
+      2,
+      {
+        "allowDeclarations": true
+      }
     ]
   }
 }
