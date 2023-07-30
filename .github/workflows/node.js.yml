@@ -11,15 +11,19 @@ on:
       - master
 
 jobs:
-  build:
+  test-and-lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout branch at $GITHUB_WORKSPACE
+      uses: actions/checkout@v3
     - name: Use Node.js 16
       uses: actions/setup-node@v3
       with:
         node-version: 16
         cache: 'npm'
-    - run: yarn install --frozen-lockfile
-    - run: yarn run test
-    - run: yarn run lint
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+    - name: Run tests
+      run: yarn run test
+    - name: Run eslint
+      run: yarn run lint
