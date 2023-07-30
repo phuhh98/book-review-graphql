@@ -12,7 +12,7 @@ definitions:
         caches:
           - node
         script:
-          - npm install -g yarn
+          - npm install -g yarn --force
     - step: &Dep-install
         name: Install dependencies
         caches:
