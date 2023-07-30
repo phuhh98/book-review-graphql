@@ -2,14 +2,14 @@
   "name": "test-graphql",
   "version": "0.0.1",
   "description": "graphql learn test",
-  "main": "src/index.ts",
+  "main": "src/app.ts",
   "scripts": {
     "test": "echo \"Test is running..\"",
-    "start:dev": "nodemon -e ts -x ts-node src/index.ts",
-    "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/index.js",
-    "build": "rm -rf ./dist/ && tsc",
+    "start:dev": "nodemon -e ts -x \"npm run generate && ts-node src/app.ts\"",
+    "start": "ts-node src/app.ts",
     "lint": "eslint src/**/*.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "generate": "graphql-codegen --config codegen.yml"
   },
   "keywords": [
     "graphql",
@@ -18,14 +18,24 @@
   "author": "phuhh98@gmail.com",
   "license": "ISC",
   "dependencies": {
+    "@apollo/server": "^4.9.0",
+    "@godaddy/terminus": "^4.12.1",
+    "@graphql-tools/utils": "^10.0.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-graphql": "^0.12.0",
     "graphql": "^16.7.1",
+    "mongoose": "^7.4.1",
     "nodemon": "^3.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-resolvers": "^4.0.1",
+    "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/node": "^20.4.4",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
