@@ -8,12 +8,12 @@ export const CORS_OPTIONS: CorsOptions = {
   origin: (origin, callback) => {
     if (
       WHITELIST.some(
-        (allowedMember) => !!origin && allowedMember.indexOf(origin) !== -1,
+        (allowedMember) => !!origin && allowedMember.includes(origin),
       ) ||
       !origin
     ) {
-      return callback(null, true);
+      callback(null, true);
     }
-    return callback(new Error('Not allowed by CORS'));
+    callback(new Error('Not allowed by CORS'));
   },
 };

@@ -1,6 +1,9 @@
 import { IResolvers, IFieldResolver } from '@graphql-tools/utils';
 
-const helloResolver: IFieldResolver<{}, {}> = () => {
+const helloResolver: IFieldResolver<
+  Record<string, undefined>,
+  Record<string, unknown>
+> = () => {
   return 'Hello from graphql';
 };
 
