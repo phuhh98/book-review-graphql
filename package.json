@@ -1,5 +1,5 @@
 {
-  "name": "test-graphql",
+  "name": "book-review-graphql-be",
   "version": "0.0.1",
   "description": "graphql learn test",
   "main": "src/app.ts",

@@ -7,30 +7,36 @@ image: node:16
 
 definitions:
   steps:
+    - step: &yarn-install
+        name: Yarn Install
+        caches:
+          - node
+        script:
+          - npm install -g yarn
     - step: &Dep-install
-      name: Install dependencies
-      caches:
-        - node
-      script:
-        - npm install
+        name: Install dependencies
+        caches:
+          - node
+        script:
+          - yarn
     - step: &Run-tests
         name: Run tests
         caches:
           - node
         script:
-          - npm run test
+          - yarn run test
     - step: &Run-lint
         name: Runt code lint
         caches:
           - node
         script:
-          - npm run lint
+          - yarn run lint
 
 pipelines:
   default:
+    - step: *yarn-install
     - step: *Dep-install
     - parallel:
-      steps: 
-        - step: *Run-tests
-        - step: *Run-lint
-    
+        steps:
+          - step: *Run-tests
+          - step: *Run-lint
