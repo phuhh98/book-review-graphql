@@ -1,0 +1,73 @@
+// virtual fields are denote by prefix "v_"
+
+Table book {
+    _id ObjectID [pk]
+    title String
+    description String
+    rating Number
+    publish_date Date
+    publisher String
+    cover_image BinaryData
+    v_authors "author[]"
+    genres "genre[]" [ref: > genre._id]
+    created_at Timestamp
+    updated_at Timestamp
+}
+
+Table user {
+    _id ObjectID [pk]
+    name String
+    email String
+    full_name String
+    date_of_birth Timestamp
+    avatar BinaryData
+    followers "user[]" [ref: > user._id]
+    following "user[]" [ref: > user._id]
+    read_books "book[]" [ref: > book._id]
+    // reviews "review[]" [ref: > review._id]
+    created_at Timestamp
+    updated_at Timestamp
+}
+
+Table author {
+    _id ObjectID [pk]
+    userId ObjectID [ref: - user._id]
+    v_books "ObjectID[]" [ref: > book._id]
+    created_at Timestamp
+    updated_at Timestamp
+}
+
+Table genre {
+    _id ObjectID [pk]
+    title String
+    created_at Timestamp
+    updated_at Timestamp
+}
+
+// Table review {
+//   _id ObjectID [pk]
+//   bookId ObjectID [ref: - book._id]
+//   userId ObjectID [ref: - user._id]
+//   rating Integer
+//   comment "comment" [ref: - comment._id]
+//   created_at Timestamp
+//   updated_at Timestamp
+// }
+
+// Table comment {
+//   _id ObjectID [pk]
+//   content String
+//   v_user "user"
+//   v_parent_comment "comment" [ref: - comment._id]
+//   v_child_comments "commnent[]" [ref: > comment._id]
+// }
+
+Table book_author {
+    bookId ObjectID [ref: > book._id]
+    authorId ObjectID [ref: > author._id]
+}
+
+Table genre_book {
+    genreId ObjectID [ref: > genre._id]
+    bookId ObjectID [ref: > book._id]
+}
