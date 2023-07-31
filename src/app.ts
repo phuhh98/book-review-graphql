@@ -48,7 +48,6 @@ async function startServer() {
     onSignal,
   });
 
-  console.info('start');
 }
 
 startServer();
