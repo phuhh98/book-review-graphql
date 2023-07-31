@@ -27,3 +27,15 @@ jobs:
         run: yarn run test
       - name: Run eslint
         run: yarn run lint
+  push-bitbucket:
+    runs-on: ubuntu-latest
+    needs: test-and-lint
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: yesolutions/mirror-action@master
+        with:
+          REMOTE: ${{secrets.BITBUCKET_REMOTE_SSH_GIT}}
+          GIT_SSH_PRIVATE_KEY: ${{ secrets.BITBUCKET_MIRROR_SSH_PRIVATE_KEY }}
+          GIT_SSH_KNOWN_HOSTS: ${{ secrets.BITBUCKET_MIRROR_SSH_KNOWN_HOSTS }}
