@@ -47,6 +47,8 @@ async function startServer() {
     signals: ['SIGINT', 'SITERM'],
     onSignal,
   });
+
+  console.info('start');
 }
 
 startServer();
