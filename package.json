@@ -2,11 +2,11 @@
   "name": "book-review-graphql-be",
   "version": "0.0.1",
   "description": "graphql learn test",
-  "main": "src/app.ts",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Test is running..\"",
-    "start:dev": "nodemon -e ts -x \"npm run generate && ts-node src/app.ts\"",
-    "start": "ts-node src/app.ts",
+    "start:dev": "nodemon -e ts -x \"npm run generate && ts-node src/index.ts\"",
+    "start": "ts-node src/index.ts",
     "lint": "eslint src/**/*.ts",
     "prepare": "husky install",
     "generate": "graphql-codegen --config codegen.yml"

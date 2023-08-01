@@ -16,7 +16,6 @@ Table book {
 
 Table user {
     _id ObjectID [pk]
-    name String
     email String
     full_name String
     date_of_birth Timestamp

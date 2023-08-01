@@ -1,4 +1,4 @@
-import './loaders/envLoader';
+import './loaders';
 
 import express from 'express';
 import cors from 'cors';
@@ -10,6 +10,7 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import { typeDefs, resolvers } from './graphql';
 import { CORS_OPTIONS } from './utils/cors';
 import { createTerminus } from '@godaddy/terminus';
+import { ENV_PROD } from './constants';
 
 async function startServer() {
   const app = express();
@@ -17,12 +18,11 @@ async function startServer() {
 
   const PORT = parseInt(process.env.SERVER_PORT, 10);
 
-  // Set up Apollo Server
   const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-    // introspection: false,
+    introspection: process.env.ENV !== ENV_PROD ? true : false,
   });
   await apolloServer.start();
 
@@ -47,8 +47,6 @@ async function startServer() {
     signals: ['SIGINT', 'SITERM'],
     onSignal,
   });
-
-  console.info('start');
 }
 
-startServer();
+export default startServer;
