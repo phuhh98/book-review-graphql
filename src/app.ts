@@ -1,8 +1,10 @@
+import './loaders';
+
 import express from 'express';
 import cors from 'cors';
 import { CORS_OPTIONS } from './utils/cors';
-import { applyTerminusGracefullyShutdown, postStartHandler } from './utils';
-import { applyRoutes } from './routes';
+import { createTerminus } from '@godaddy/terminus';
+import { ENV_PROD } from './constants';
 
 export async function bootstrap() {
   const app = express();
