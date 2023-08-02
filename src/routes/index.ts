@@ -1,13 +1,14 @@
+import { expressMiddleware } from '@apollo/server/express4';
 import { Application } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { getApolloMiddleware } from './graphql';
+import { getApolloServer } from './graphql';
 
 export async function applyRoutes(app: Application) {
-  const apolloMidleware = await getApolloMiddleware(app);
+  const apolloServer = await getApolloServer(app);
 
-  app.use('/graphql', apolloMidleware);
+  app.use('/graphql', expressMiddleware(apolloServer));
 
-  app.get('/', (_, res) => {
+  app.get('/', (req, res, next) => {
     res.status(StatusCodes.NOT_FOUND).send('This route does not exist');
   });
 }

@@ -4,9 +4,9 @@
   "description": "graphql learn test",
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Test is running..\"",
-    "start:dev": "nodemon -e ts -x \"npm run generate && ts-node src/index.ts\"",
-    "start": "ts-node src/index.ts",
+    "test": "jest",
+    "dev": "nodemon -e ts -x \"npm run generate && ts-node src/index.ts\"",
+    "start": "npm run build && node dist/index.js",
     "lint": "eslint src/**/*.ts",
     "prepare": "husky install",
     "generate": "graphql-codegen --config codegen.yml",
