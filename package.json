@@ -4,7 +4,7 @@
   "description": "graphql learn test",
   "main": "src/index.ts",
   "scripts": {
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "dev": "nodemon -e ts -x \"npm run generate && ts-node src/index.ts\"",
     "start": "npm run build && node dist/index.js",
     "lint": "eslint src/**/*.ts",

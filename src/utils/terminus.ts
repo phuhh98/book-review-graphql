@@ -1,15 +1,15 @@
 import { createTerminus } from '@godaddy/terminus';
-import { Server } from 'http';
+import { Server } from 'node:http';
+import util from 'util';
 
-function getKillSignalHandler(server: Server) {
-  return async function killSignalHanlder(): Promise<typeof server> {
+const getKillSignalHandler = (server: Server) =>
+  util.promisify(function killSignalHanlder() {
     console.info('Received kill signal, shutting down gracefully');
     return server.close(() => {
       console.info('Closed out remaining connections');
       process.exit(0);
     });
-  };
-}
+  });
 
 export function applyTerminusGracefullyShutdown(server: Server) {
   createTerminus(server, {
