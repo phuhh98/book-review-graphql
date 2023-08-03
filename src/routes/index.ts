@@ -8,7 +8,7 @@ export async function applyRoutes(app: Application) {
 
   app.use('/graphql', expressMiddleware(apolloServer));
 
-  app.get('/', (req, res, next) => {
+  app.get('/', (_, res) => {
     res.status(StatusCodes.NOT_FOUND).send('This route does not exist');
   });
 }
