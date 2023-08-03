@@ -2,6 +2,7 @@ import http from 'node:http';
 import { Application } from 'express';
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { expressMiddleware } from '@apollo/server/express4';
 
 import { ENV_PROD } from '../../constants';
 
@@ -28,3 +29,7 @@ export async function getApolloServer(app: Application) {
   await apolloServer.start();
   return apolloServer;
 }
+
+export const getApolloMiddleware = async (app: Application) => {
+  return expressMiddleware(await getApolloServer(app));
+};

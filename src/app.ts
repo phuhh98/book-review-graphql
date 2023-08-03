@@ -11,7 +11,7 @@ export async function bootstrap() {
 
   app.use(cors(CORS_OPTIONS));
   app.use(express.json());
-  applyRoutes(app);
+  await applyRoutes(app);
 
   const server = app.listen(PORT, postStartHandler);
 
