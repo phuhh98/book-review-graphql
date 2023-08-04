@@ -4,7 +4,7 @@ import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { expressMiddleware } from '@apollo/server/express4';
 
-import { ENV_PROD } from '../../constants';
+import { ENV } from '../../constants';
 
 import path from 'path';
 import { readFileSync } from 'fs';
@@ -24,7 +24,7 @@ export async function getApolloServer(app: Application) {
     typeDefs,
     resolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-    introspection: process.env.ENV !== ENV_PROD ? true : false,
+    introspection: process.env.ENV !== ENV.ENV_PROD ? true : false,
   });
   await apolloServer.start();
   return apolloServer;

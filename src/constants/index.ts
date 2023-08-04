@@ -1,1 +1,1 @@
-export const ENV_PROD = 'PROD';
+export * from './stringConstants';

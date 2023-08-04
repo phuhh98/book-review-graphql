@@ -49,6 +49,7 @@ export type Book = {
   cover_image?: Maybe<Scalars['Binary']['output']>;
   created_at: Scalars['Date']['output'];
   description: Scalars['String']['output'];
+  id?: Maybe<Scalars['ID']['output']>;
   publish_date?: Maybe<Scalars['Date']['output']>;
   publisher?: Maybe<Scalars['String']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
@@ -59,6 +60,7 @@ export type Book = {
 export type Genre = {
   __typename?: 'Genre';
   created_at: Scalars['Date']['output'];
+  id?: Maybe<Scalars['ID']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['Date']['output'];
 };
@@ -196,6 +198,7 @@ export type ResolversTypes = ResolversObject<{
   Date: ResolverTypeWrapper<Scalars['Date']['output']>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Genre: ResolverTypeWrapper<Genre>;
+  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   User: ResolverTypeWrapper<User>;
@@ -210,6 +213,7 @@ export type ResolversParentTypes = ResolversObject<{
   Date: Scalars['Date']['output'];
   Float: Scalars['Float']['output'];
   Genre: Genre;
+  ID: Scalars['ID']['output'];
   Query: {};
   String: Scalars['String']['output'];
   User: User;
@@ -249,6 +253,7 @@ export type BookResolvers<
   >;
   created_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   publish_date?: Resolver<
     Maybe<ResolversTypes['Date']>,
     ParentType,
@@ -276,6 +281,7 @@ export type GenreResolvers<
     ResolversParentTypes['Genre'] = ResolversParentTypes['Genre'],
 > = ResolversObject<{
   created_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
