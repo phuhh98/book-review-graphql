@@ -2,14 +2,16 @@
   "name": "book-review-graphql-be",
   "version": "0.0.1",
   "description": "graphql learn test",
-  "main": "src/app.ts",
+  "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Test is running..\"",
-    "start:dev": "nodemon -e ts -x \"npm run generate && ts-node src/app.ts\"",
-    "start": "ts-node src/app.ts",
+    "test": "jest --passWithNoTests",
+    "dev": "nodemon -e ts -x \"npm run generate && ts-node src/index.ts\"",
+    "start": "npm run build && node dist/index.js",
     "lint": "eslint src/**/*.ts",
     "prepare": "husky install",
-    "generate": "graphql-codegen --config codegen.yml"
+    "generate": "graphql-codegen --config codegen.yml",
+    "copy": "copyfiles -f \"./src/routes/graphql/*.gql\" dist/routes/graphql/",
+    "build": "tsc && npm run copy"
   },
   "keywords": [
     "graphql",
@@ -26,6 +28,7 @@
     "express": "^4.18.2",
     "express-graphql": "^0.12.0",
     "graphql": "^16.7.1",
+    "http-status-codes": "^2.2.0",
     "mongoose": "^7.4.1",
     "nodemon": "^3.0.1"
   },
@@ -40,10 +43,13 @@
     "@types/node": "^20.4.4",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
+    "concurrently": "^8.2.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^8.0.3",
+    "jest": "^29.6.2",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.0",
     "ts-node": "^10.9.1",

@@ -1,0 +1,41 @@
+type Query {
+  hello: String
+}
+
+scalar Date
+scalar Binary
+
+type User {
+  full_name: String!
+  email: String!
+  date_of_birth: Date
+  avatar: Binary
+  read_books: [Book]!
+  created_at: Date!
+  updated_at: Date!
+}
+
+type Author {
+  bio: String
+  user: User
+  books: [Book]!
+  created_at: Date!
+  updated_at: Date!
+}
+
+type Book {
+  title: String!
+  description: String!
+  rating: Float
+  publish_date: Date
+  publisher: String
+  cover_image: Binary
+  created_at: Date!
+  updated_at: Date!
+}
+
+type Genre {
+  name: String
+  created_at: Date!
+  updated_at: Date!
+}

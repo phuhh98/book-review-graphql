@@ -13,7 +13,8 @@ export const CORS_OPTIONS: CorsOptions = {
       !origin
     ) {
       callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
     }
-    callback(new Error('Not allowed by CORS'));
   },
 };
