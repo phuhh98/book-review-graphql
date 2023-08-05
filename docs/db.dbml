@@ -1,4 +1,6 @@
 // virtual fields are denote by prefix "v_"
+// which will be implemented by virtual in mongoose
+// or resolved in aggregate query
 
 Table book {
     _id ObjectID [pk]
@@ -7,41 +9,65 @@ Table book {
     rating Number
     publish_date Date
     publisher String
-    cover_image BinaryData
-    v_authors "author[]"
-    genres "genre[]" [ref: > genre._id]
-    created_at Timestamp
-    updated_at Timestamp
-}
-
-Table user {
-    _id ObjectID [pk]
-    email String
-    full_name String
-    date_of_birth Timestamp
-    avatar BinaryData
-    followers "user[]" [ref: > user._id]
-    following "user[]" [ref: > user._id]
-    read_books "book[]" [ref: > book._id]
-    // reviews "review[]" [ref: > review._id]
-    created_at Timestamp
-    updated_at Timestamp
-}
-
-Table author {
-    _id ObjectID [pk]
-    userId ObjectID [ref: - user._id]
-    v_books "ObjectID[]" [ref: > book._id]
+    // cover_image BinaryData [ref:  - image._id]
+    // v_authors "author[]"
+    v_genres "genre[]"
     created_at Timestamp
     updated_at Timestamp
 }
 
 Table genre {
-    _id ObjectID [pk]
-    title String
-    created_at Timestamp
-    updated_at Timestamp
+  _id ObjectID [pk]
+  name String
+  alias String
+  description String
+  v_books "book[]"
+  created_at Timestamp
+  updated_at Timestamp
 }
+
+Table genre_book {
+    
+    bookId ObjectID [ref: > book._id]
+    genreId ObjectID [ref: > genre._id]
+}
+
+// Table user {
+//     _id ObjectID [pk]
+//     email String
+//     full_name String
+//     date_of_birth Timestamp
+//     avatar BinaryData [ref: - image._id]
+//     read_books "book[]" [ref: < book._id]
+//     // v_followers "user[]"
+//     // v_following "user[]"
+//     // v_reviews "review[]"
+//     created_at Timestamp
+//     updated_at Timestamp
+// }
+
+// Table user_follower {
+//   userId ObjectID [ref: > user._id]
+//   followerId ObjectID [ref: > user._id]
+// }
+
+// Table author {
+//   _id ObjectID [pk]
+//   bio String
+//   user ObjectID [ref: - user._id]
+//   // v_books "book[]"
+//   created_at Timestamp
+//   updated_at Timestamp
+// }
+
+
+
+// Table image {
+//   _id ObjectID [pk]
+//   mime_type String
+//   name String
+//   data BinaryData
+// }
 
 // Table review {
 //   _id ObjectID [pk]
@@ -61,12 +87,9 @@ Table genre {
 //   v_child_comments "commnent[]" [ref: > comment._id]
 // }
 
-Table book_author {
-    bookId ObjectID [ref: > book._id]
-    authorId ObjectID [ref: > author._id]
-}
+// Table book_author {
+//     bookId ObjectID [ref: > book._id]
+//     authorId ObjectID [ref: > author._id]
+// }
 
-Table genre_book {
-    genreId ObjectID [ref: > genre._id]
-    bookId ObjectID [ref: > book._id]
-}
+

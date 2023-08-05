@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { ENV } from '../constants';
 
 const { MONGODB_URL, MONGODB_USER, MONGODB_PASSWORD, MONGODB_DBNAME } =
   process.env;
@@ -17,3 +18,9 @@ mongoose
     console.error(e);
     process.exit(1);
   });
+
+mongoose.set('strictQuery', true);
+
+if (process.env.ENV !== ENV.ENV_PROD) {
+  mongoose.set('debug', true);
+}

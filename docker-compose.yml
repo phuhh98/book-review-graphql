@@ -1,13 +1,26 @@
-# Use root/example as user/password credentials
-version: '3.1'
+version: '1'
 
 services:
   mongo:
     container_name: 'mongo-book-review'
     image: mongo
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: &mongo_user root
+      MONGO_INITDB_ROOT_PASSWORD: &mongo_password example
     ports:
       - '27017:27017'
     restart: unless-stopped
+
+  backend-server:
+    build: .
+    environment:
+      DOCKER: true
+      ENV: DEV
+      SERVER_PORT: 8080
+      MONGODB_URL: mongodb://mongo:27017/
+      MONGODB_DBNAME: book-review-db
+      MONGODB_USER: *mongo_user
+      MONGODB_PASSWORD: *mongo_password
+      CLUSTER_MODE: 'off'
+    ports:
+      - '8080:8080'

@@ -1,9 +1,11 @@
 import path from 'path';
 import * as dotenv from 'dotenv';
+import { ENV } from '../constants';
 
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
+      DOCKER: string;
       ENV: string;
       SERVER_PORT: string;
       MONGODB_URL: string;
@@ -16,4 +18,4 @@ declare global {
 }
 
 const envPath = path.resolve(__dirname, '../../.env');
-dotenv.config({ path: envPath });
+if (process.env.DOCKER !== ENV.IS_DOCKER) dotenv.config({ path: envPath });

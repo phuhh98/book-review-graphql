@@ -1,12 +1,15 @@
 type Query {
-  hello: String
+  bookByTitle(title: String): Book
+  bookById(id: ID): Book
+  genreByName(name: String): Genre
+  genreById(id: ID): Genre
 }
 
 scalar Date
 scalar Binary
 
 type User {
-  full_name: String!
+  full_name: String
   email: String!
   date_of_birth: Date
   avatar: Binary
@@ -24,18 +27,24 @@ type Author {
 }
 
 type Book {
+  id: ID!
   title: String!
-  description: String!
+  description: String
   rating: Float
   publish_date: Date
   publisher: String
   cover_image: Binary
   created_at: Date!
   updated_at: Date!
+  genres: [Genre]
 }
 
 type Genre {
-  name: String
+  id: ID!
+  name: String!
+  alias: String
+  description: String
+  books: [Book]
   created_at: Date!
   updated_at: Date!
 }
