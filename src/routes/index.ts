@@ -1,21 +1,25 @@
 import { Application, RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { BookModel, GenreModel, GenreBookRelModel } from '../models';
+import { bookRouter } from './book';
+import { genreRouter } from './genre';
 import { getApolloMiddleware } from './graphql';
-import mongoose from 'mongoose';
-import { BookModel, GenreModel, GenreBookRelModel } from 'src/models';
-import { bookRouter } from './book/router';
+import { errorMiddleware } from '../middlewares';
 
 export async function applyRoutes(app: Application) {
   const apolloMidleware = await getApolloMiddleware(app);
 
   app.use('/book', bookRouter);
+  app.use('/genre', genreRouter);
   app.use('/graphql', apolloMidleware);
 
-  app.use('/', indexPageHanlder);
+  // app.use('/', indexPageHanlder);
 
   app.all('*', (_, res) => {
     res.status(StatusCodes.NOT_FOUND).send('This route does not exist');
   });
+
+  app.use(errorMiddleware);
 }
 
 //eslint-disable-next-line
@@ -26,16 +30,10 @@ const indexPageHanlder: RequestHandler = async (_, res) => {
       [
         {
           $match: {
-            _id: new mongoose.Types.ObjectId('64cd2de2cb11cbb152b66ebf'),
-            // _id: {
-            //   $eq: {
-            //     $toObjectId: '64cd2de2cb11cbb152b66ebf',
-            //   },
-            // },
-
-            // title: {
-            //   $in: [new RegExp(`${'gone with the wind'}`, 'i')],
-            // },
+            title: {
+              $regex: 'wind',
+              $options: 'i',
+            },
           },
         },
         {
@@ -70,9 +68,7 @@ const indexPageHanlder: RequestHandler = async (_, res) => {
               },
               { $unwind: '$genreNodeFromGenre' },
               {
-                $replaceRoot: {
-                  newRoot: '$genreNodeFromGenre',
-                },
+                $replaceWith: '$genreNodeFromGenre',
               },
             ],
             as: 'genres',

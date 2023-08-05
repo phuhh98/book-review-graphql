@@ -1,7 +1,12 @@
-import { Book, Genre } from 'src/types';
-import { GenreBookRel } from 'src/types/constant';
+import { BookData, GenreData } from '../../types/models';
 
 export interface IGenreBookRelService {
-  addOne(bookId: Book['id'], genreId: Genre['id']): Promise<GenreBookRel>;
-  deleteGenreBookRel(bookId: Book['id'], genreId: Genre['id']): Promise<void>;
+  addOne(
+    bookId: BookData['_id'] | string,
+    genreId: GenreData['_id'] | string,
+  ): Promise<void>;
+  deleteGenreBookRel(
+    bookId: BookData['_id'] | string,
+    genreId: GenreData['_id'] | string,
+  ): Promise<void>;
 }

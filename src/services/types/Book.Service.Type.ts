@@ -1,9 +1,14 @@
-import { Book } from 'src/types';
+import { BookData } from '../../types/models';
 
 export interface IBookService {
-  addOne(bookData: Book): Promise<Book | null>;
-  getOneById(bookId: Book['id']): Promise<Book | null>;
-  getOneByTitle(bookTitle: Book['title']): Promise<Book | null>;
-  updateOneById(bookId: Book['id'], updateData: Book): Promise<void>;
-  deleteOneById(bookId: Book['id']): Promise<void>;
+  addOne(bookData: BookData): Promise<BookData | null>;
+  getOneById(bookId: BookData['_id'] | string): Promise<BookData | null>;
+  getOneByTitle(
+    bookTitle: BookData['title'] | string,
+  ): Promise<BookData | null>;
+  updateOneById(
+    bookId: BookData['_id'] | string,
+    updateData: BookData,
+  ): Promise<void>;
+  deleteOneById(bookId: BookData['_id'] | string): Promise<void>;
 }

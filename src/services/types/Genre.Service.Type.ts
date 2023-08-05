@@ -1,9 +1,14 @@
-import { Genre } from 'src/types';
+import { GenreData } from '../../types/models';
 
 export interface IGenreService {
-  addOne(bookData: Genre): Promise<Genre | null>;
-  getOneById(bookId: Genre['id']): Promise<Genre | null>;
-  getOneByName(bookTitle: Genre['name']): Promise<Genre | null>;
-  updateOneById(bookId: Genre['id'], updateData: Genre): Promise<void>;
-  deleteOneById(bookId: Genre['id']): Promise<void>;
+  addOne(genreData: GenreData): Promise<GenreData | null>;
+  getOneById(genreId: GenreData['_id'] | string): Promise<GenreData | null>;
+  getOneByName(
+    genreName: GenreData['name'] | string,
+  ): Promise<GenreData | null>;
+  updateOneById(
+    genreId: GenreData['_id'] | string,
+    updateData: GenreData,
+  ): Promise<void>;
+  deleteOneById(genreId: GenreData['_id'] | string): Promise<void>;
 }

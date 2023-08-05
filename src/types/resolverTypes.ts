@@ -3,7 +3,8 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from 'graphql';
-import { GraphqlContext } from './';
+import { BookData, GenreData } from './models';
+import { GraphqlContext } from './context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -24,6 +25,7 @@ export type Incremental<T> =
   | {
       [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
     };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string };
@@ -48,8 +50,9 @@ export type Book = {
   __typename?: 'Book';
   cover_image?: Maybe<Scalars['Binary']['output']>;
   created_at: Scalars['Date']['output'];
-  description: Scalars['String']['output'];
-  id?: Maybe<Scalars['ID']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  genres?: Maybe<Array<Maybe<Genre>>>;
+  id: Scalars['ID']['output'];
   publish_date?: Maybe<Scalars['Date']['output']>;
   publisher?: Maybe<Scalars['String']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
@@ -59,15 +62,37 @@ export type Book = {
 
 export type Genre = {
   __typename?: 'Genre';
+  alias?: Maybe<Scalars['String']['output']>;
+  books?: Maybe<Array<Maybe<Book>>>;
   created_at: Scalars['Date']['output'];
-  id?: Maybe<Scalars['ID']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
   updated_at: Scalars['Date']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  hello?: Maybe<Scalars['String']['output']>;
+  bookById?: Maybe<Book>;
+  bookByTitle?: Maybe<Book>;
+  genreById?: Maybe<Genre>;
+  genreByName?: Maybe<Genre>;
+};
+
+export type QueryBookByIdArgs = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type QueryBookByTitleArgs = {
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type QueryGenreByIdArgs = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type QueryGenreByNameArgs = {
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type User = {
@@ -76,7 +101,7 @@ export type User = {
   created_at: Scalars['Date']['output'];
   date_of_birth?: Maybe<Scalars['Date']['output']>;
   email: Scalars['String']['output'];
-  full_name: Scalars['String']['output'];
+  full_name?: Maybe<Scalars['String']['output']>;
   read_books: Array<Maybe<Book>>;
   updated_at: Scalars['Date']['output'];
 };
@@ -191,32 +216,46 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  Author: ResolverTypeWrapper<Author>;
+  Author: ResolverTypeWrapper<
+    Omit<Author, 'books' | 'user'> & {
+      books: Array<Maybe<ResolversTypes['Book']>>;
+      user?: Maybe<ResolversTypes['User']>;
+    }
+  >;
   Binary: ResolverTypeWrapper<Scalars['Binary']['output']>;
-  Book: ResolverTypeWrapper<Book>;
+  Book: ResolverTypeWrapper<BookData>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Date: ResolverTypeWrapper<Scalars['Date']['output']>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
-  Genre: ResolverTypeWrapper<Genre>;
+  Genre: ResolverTypeWrapper<GenreData>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
-  User: ResolverTypeWrapper<User>;
+  User: ResolverTypeWrapper<
+    Omit<User, 'read_books'> & {
+      read_books: Array<Maybe<ResolversTypes['Book']>>;
+    }
+  >;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  Author: Author;
+  Author: Omit<Author, 'books' | 'user'> & {
+    books: Array<Maybe<ResolversParentTypes['Book']>>;
+    user?: Maybe<ResolversParentTypes['User']>;
+  };
   Binary: Scalars['Binary']['output'];
-  Book: Book;
+  Book: BookData;
   Boolean: Scalars['Boolean']['output'];
   Date: Scalars['Date']['output'];
   Float: Scalars['Float']['output'];
-  Genre: Genre;
+  Genre: GenreData;
   ID: Scalars['ID']['output'];
   Query: {};
   String: Scalars['String']['output'];
-  User: User;
+  User: Omit<User, 'read_books'> & {
+    read_books: Array<Maybe<ResolversParentTypes['Book']>>;
+  };
 }>;
 
 export type AuthorResolvers<
@@ -252,8 +291,17 @@ export type BookResolvers<
     ContextType
   >;
   created_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  genres?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Genre']>>>,
+    ParentType,
+    ContextType
+  >;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   publish_date?: Resolver<
     Maybe<ResolversTypes['Date']>,
     ParentType,
@@ -280,9 +328,20 @@ export type GenreResolvers<
   ParentType extends
     ResolversParentTypes['Genre'] = ResolversParentTypes['Genre'],
 > = ResolversObject<{
+  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  books?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Book']>>>,
+    ParentType,
+    ContextType
+  >;
   created_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -292,7 +351,30 @@ export type QueryResolvers<
   ParentType extends
     ResolversParentTypes['Query'] = ResolversParentTypes['Query'],
 > = ResolversObject<{
-  hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bookById?: Resolver<
+    Maybe<ResolversTypes['Book']>,
+    ParentType,
+    ContextType,
+    Partial<QueryBookByIdArgs>
+  >;
+  bookByTitle?: Resolver<
+    Maybe<ResolversTypes['Book']>,
+    ParentType,
+    ContextType,
+    Partial<QueryBookByTitleArgs>
+  >;
+  genreById?: Resolver<
+    Maybe<ResolversTypes['Genre']>,
+    ParentType,
+    ContextType,
+    Partial<QueryGenreByIdArgs>
+  >;
+  genreByName?: Resolver<
+    Maybe<ResolversTypes['Genre']>,
+    ParentType,
+    ContextType,
+    Partial<QueryGenreByNameArgs>
+  >;
 }>;
 
 export type UserResolvers<
@@ -308,7 +390,11 @@ export type UserResolvers<
     ContextType
   >;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  full_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  full_name?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
   read_books?: Resolver<
     Array<Maybe<ResolversTypes['Book']>>,
     ParentType,

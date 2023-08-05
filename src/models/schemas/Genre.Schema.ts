@@ -3,11 +3,11 @@ import {
   GENERAL_FIELDS,
   GENRE_BOOK_REL_FIELDS,
   MODEL_ALIAS,
-} from 'src/constants';
-import { Genre } from 'src/types';
+} from '../../constants/index';
 import { GenreBookRelModel } from '..';
+import { GenreData } from '../../types/models';
 
-const GenreSchema = new Schema<Genre>(
+const GenreSchema = new Schema<GenreData>(
   {
     name: {
       type: String,
@@ -15,18 +15,15 @@ const GenreSchema = new Schema<Genre>(
       unique: true,
       lowercase: true,
     },
+    alias: {
+      type: String,
+      lowercase: true,
+      unique: true,
+    },
+    description: String,
   },
   {
-    timestamps: {
-      createdAt: GENERAL_FIELDS.created_at,
-      updatedAt: GENERAL_FIELDS.updated_at,
-    },
     toJSON: {
-      transform: (_, ret) => {
-        ret.id = ret._id;
-        delete ret._id;
-        delete ret.__v;
-      },
       virtuals: true,
     },
   },
@@ -34,12 +31,12 @@ const GenreSchema = new Schema<Genre>(
 
 GenreSchema.virtual('books', {
   ref: MODEL_ALIAS.GenreBookRel,
-  localField: GENERAL_FIELDS.id,
+  localField: GENERAL_FIELDS._id,
   foreignField: GENRE_BOOK_REL_FIELDS.genreId,
 });
 
 // clear relation on delete
-GenreSchema.pre<Genre & { _id: string }>('deleteOne', async function (next) {
+GenreSchema.pre<GenreData>('deleteOne', async function (next) {
   const session = await GenreBookRelModel.startSession();
   GenreBookRelModel.deleteMany({
     [GENRE_BOOK_REL_FIELDS.genreId]: this._id,

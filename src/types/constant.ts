@@ -1,4 +1,4 @@
-import { Book, Genre } from './resolverTypes';
+import { BookData, GenreData } from './models';
 
 export type GenreBookRel = {
   bookId: unknown;
@@ -6,11 +6,14 @@ export type GenreBookRel = {
 };
 
 type OmitGraphTypeName<T> = Exclude<T, '__typename'>;
+type OmitDescription<T> = Exclude<T, 'description'>;
 type Replace_id<T> = Exclude<T, 'id'> | '_id';
 
-type GeneralKeys = OmitGraphTypeName<Extract<GenreKeys, BookKeys>>;
-type GenreKeys = OmitGraphTypeName<keyof Genre>;
-type BookKeys = OmitGraphTypeName<keyof Book>;
+type GeneralKeys = OmitDescription<
+  OmitGraphTypeName<Extract<GenreKeys, BookKeys>>
+>;
+type GenreKeys = OmitGraphTypeName<keyof GenreData>;
+type BookKeys = OmitGraphTypeName<keyof BookData>;
 type GenreBookRelKeys = OmitGraphTypeName<keyof GenreBookRel>;
 
 export type GeneralFields = Required<

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { MODEL_ALIAS } from 'src/constants';
+import { MODEL_ALIAS } from '../constants';
 import { BookSchema } from './schemas/Book.Schema';
 import { GenreSchema } from './schemas/Genre.Schema';
 import { GenreBookRelSchema } from './schemas/GenreBookRel.Schema';

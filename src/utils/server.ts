@@ -1,5 +1,7 @@
+import { StatusCodes } from 'http-status-codes';
 import cluster from 'node:cluster';
 import os from 'node:os';
+import { NextFuncError } from '../types';
 
 export function runInCluster(callback: () => unknown) {
   const cCPUs = os.cpus().length;
@@ -24,3 +26,13 @@ export function postStartHandler() {
   console.info('Server start at port', PORT);
   console.info(`visit http://localhost:${PORT}`);
 }
+
+export const createNextErrorMessage = (
+  statusCode: StatusCodes,
+  error: Error | string,
+) => {
+  return new NextFuncError(
+    statusCode,
+    error instanceof Error ? error.message : error,
+  );
+};

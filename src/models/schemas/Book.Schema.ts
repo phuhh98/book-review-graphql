@@ -1,16 +1,15 @@
-import mongoose, { Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 import moment from 'moment';
 import {
   BOOK_FIELDS,
-  GENERAL_FIELDS,
   GENRE_BOOK_REL_FIELDS,
   MODEL_ALIAS,
-} from 'src/constants';
-import { Book } from 'src/types';
+} from '../../constants';
 import { isDate } from 'util/types';
 import { GenreBookRelModel } from '..';
+import { BookData } from '../../types/models';
 
-const BookSchema = new Schema<Book>(
+const BookSchema = new Schema<BookData>(
   {
     title: {
       type: String,
@@ -29,16 +28,7 @@ const BookSchema = new Schema<Book>(
     publisher: String,
   },
   {
-    timestamps: {
-      createdAt: GENERAL_FIELDS.created_at,
-      updatedAt: GENERAL_FIELDS.updated_at,
-    },
     toJSON: {
-      transform: (_, ret) => {
-        ret.id = ret._id;
-        delete ret._id;
-        delete ret.__v;
-      },
       virtuals: true,
     },
   },
@@ -46,12 +36,12 @@ const BookSchema = new Schema<Book>(
 
 BookSchema.virtual('genres', {
   ref: MODEL_ALIAS.GenreBookRel,
-  localField: BOOK_FIELDS.id,
+  localField: BOOK_FIELDS._id,
   foreignField: GENRE_BOOK_REL_FIELDS.bookId,
 });
 
 // clear relations on delete
-BookSchema.pre<Book & { _id: string }>('deleteOne', async function (next) {
+BookSchema.pre<BookData>('deleteOne', async function (next) {
   const session = await GenreBookRelModel.startSession();
   GenreBookRelModel.deleteMany({
     [GENRE_BOOK_REL_FIELDS.bookId]: this._id,

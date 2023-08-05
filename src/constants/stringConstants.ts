@@ -3,10 +3,11 @@ import {
   GeneralFields,
   GenreBookRelFields,
   GenreFields,
-} from 'src/types/constant';
+} from '../types/constant';
 
 export const ENV = {
   ENV_PROD: 'PROD',
+  IS_DOCKER: 'true',
 };
 
 export const MODEL_ALIAS = {
@@ -16,9 +17,9 @@ export const MODEL_ALIAS = {
 };
 
 export const GENERAL_FIELDS: GeneralFields = {
-  id: '_id',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
+  _id: '_id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
 };
 
 export const BOOK_FIELDS: BookFields & { genres: 'genres' } = {
@@ -28,7 +29,6 @@ export const BOOK_FIELDS: BookFields & { genres: 'genres' } = {
   rating: 'rating',
   publish_date: 'publish_date',
   publisher: 'publisher',
-  cover_image: 'cover_image',
   genres: 'genres',
 };
 
@@ -37,6 +37,8 @@ export const GENRE_FIELDS: GenreFields & {
 } = {
   ...GENERAL_FIELDS,
   name: 'name',
+  alias: 'alias',
+  description: 'description',
   books: 'books',
 };
 

@@ -14,9 +14,6 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "baseUrl": "./",
-    "paths": {
-      "@utils/*": ["./src/contains/utils/*"]
-    },
     "strict": true
   },
   "include": ["src/**/*"],

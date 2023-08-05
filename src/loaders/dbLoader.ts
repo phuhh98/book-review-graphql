@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { ENV } from 'src/constants';
+import { ENV } from '../constants';
 
 const { MONGODB_URL, MONGODB_USER, MONGODB_PASSWORD, MONGODB_DBNAME } =
   process.env;
