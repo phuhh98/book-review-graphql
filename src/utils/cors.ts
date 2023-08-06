@@ -12,12 +12,7 @@ const WHITELIST = [`http://localhost:${PORT}`, ...ALLOWED_ORIGINS];
 
 export const CORS_OPTIONS: CorsOptions = {
   origin: (origin, callback) => {
-    if (
-      WHITELIST.some(
-        (allowedMember) => !!origin && allowedMember.includes(origin),
-      ) ||
-      !origin
-    ) {
+    if (WHITELIST.some((allowedMember) => !!origin && allowedMember.includes(origin)) || !origin) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

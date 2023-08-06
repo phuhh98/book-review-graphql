@@ -28,7 +28,7 @@ class GenreService implements IGenreService {
   async getGenresWithName(genreName: string): Promise<GenreData[] | []> {
     const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreName(genreName);
 
-    return genreAggregatedResult === null ? [] : genreAggregatedResult;
+    return genreAggregatedResult;
   }
 
   async updateOneById(genreId: GenreData['_id'] | string, updateData: GenreData): Promise<void> {

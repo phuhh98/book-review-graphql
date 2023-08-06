@@ -6,7 +6,4 @@ import { GenreBookRelSchema } from './schemas/GenreBookRel.Schema';
 
 export const BookModel = mongoose.model(MODEL_ALIAS.Book, BookSchema);
 export const GenreModel = mongoose.model(MODEL_ALIAS.Genre, GenreSchema);
-export const GenreBookRelModel = mongoose.model(
-  MODEL_ALIAS.GenreBookRel,
-  GenreBookRelSchema,
-);
+export const GenreBookRelModel = mongoose.model(MODEL_ALIAS.GenreBookRel, GenreBookRelSchema);

@@ -11,17 +11,9 @@ export const applyMiddlewares = (app: Application) => {
   app.use(morgan('tiny'));
 };
 
-export const errorMiddleware: ErrorRequestHandler = (
-  err: NextFuncError,
-  _,
-  res,
-) => {
+export const errorMiddleware: ErrorRequestHandler = (err: NextFuncError, _, res) => {
   res
-    .status(
-      Number.isNaN(err.statusCode)
-        ? StatusCodes.INTERNAL_SERVER_ERROR
-        : err.statusCode,
-    )
+    .status(Number.isNaN(err.statusCode) ? StatusCodes.INTERNAL_SERVER_ERROR : err.statusCode)
     .send(err.message)
     .end();
 };

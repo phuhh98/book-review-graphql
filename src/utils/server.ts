@@ -27,12 +27,6 @@ export function postStartHandler() {
   console.info(`visit http://localhost:${PORT}`);
 }
 
-export const createNextErrorMessage = (
-  statusCode: StatusCodes,
-  error: Error | string,
-) => {
-  return new NextFuncError(
-    statusCode,
-    error instanceof Error ? error.message : error,
-  );
+export const createNextErrorMessage = (statusCode: StatusCodes, error: Error | string) => {
+  return new NextFuncError(statusCode, error instanceof Error ? error.message : error);
 };

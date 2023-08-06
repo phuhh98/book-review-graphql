@@ -28,7 +28,7 @@ class BookService implements IBookService {
   async getBooksWithTitle(bookTitle: string): Promise<BookData[] | []> {
     const bookAggregateResult = await this.getAggregatedBookWithGenresByTitle(bookTitle);
 
-    return bookAggregateResult === null ? [] : bookAggregateResult;
+    return bookAggregateResult;
   }
 
   async updateOneById(bookId: BookData['_id'] | string, updateData: BookData): Promise<void> {
