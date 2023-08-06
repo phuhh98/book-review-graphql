@@ -31,8 +31,5 @@ export const createNextErrorMessage = (
   statusCode: StatusCodes,
   error: Error | string,
 ) => {
-  return new NextFuncError(
-    statusCode,
-    error instanceof Error ? error.message : error,
-  );
+  return new NextFuncError(statusCode, error instanceof Error ? error.message : error);
 };

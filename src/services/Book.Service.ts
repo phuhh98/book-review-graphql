@@ -1,7 +1,8 @@
 import { IBookService } from './types';
 import { BookModel, GenreBookRelModel, GenreModel } from '../models';
-import mongoose, { isValidObjectId } from 'mongoose';
+import { isValidObjectId } from 'mongoose';
 import { BookData } from '../types/models';
+import { createMongoObjectIdFromString } from 'src/utils';
 
 class BookService implements IBookService {
   async addOne(bookData: BookData): Promise<BookData | null> {
@@ -15,18 +16,20 @@ class BookService implements IBookService {
   async getOneById(bookId: BookData['_id'] | string): Promise<BookData | null> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    const bookAggregateResult = await this.getAggregatedBookWithGenresById(
-      bookId,
-    );
+    const bookAggregateResult = await this.getAggregatedBookWithGenresById(bookId);
 
     return bookAggregateResult.length !== 0 ? bookAggregateResult[0] : null;
   }
 
   async getOneByTitle(bookTitle: BookData['title']): Promise<BookData | null> {
-    const bookAggregateResult = await this.getAggregatedBookWithGenresByTitle(
-      bookTitle,
-    );
+    const bookAggregateResult = await this.getAggregatedBookWithGenresByTitle(bookTitle);
     return bookAggregateResult.length !== 0 ? bookAggregateResult[0] : null;
+  }
+
+  async getBooksWithTitle(bookTitle: string): Promise<BookData[] | []> {
+    const bookAggregateResult = await this.getAggregatedBookWithGenresByTitle(bookTitle);
+
+    return bookAggregateResult;
   }
 
   async updateOneById(
@@ -35,9 +38,10 @@ class BookService implements IBookService {
   ): Promise<void> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    await BookModel.updateOne({ _id: bookId }, { ...updateData }).session(
-      await this.getTransactionSession(),
-    );
+    await BookModel.updateOne(
+      { _id: createMongoObjectIdFromString(bookId as string) },
+      { ...updateData },
+    ).session(await this.getTransactionSession());
   }
 
   async deleteOneById(bookId: BookData['_id'] | string): Promise<void> {
@@ -62,7 +66,7 @@ class BookService implements IBookService {
       [
         {
           $match: {
-            _id: new mongoose.Types.ObjectId(bookId as string),
+            _id: createMongoObjectIdFromString(bookId as string),
           },
         },
         {
@@ -227,7 +231,7 @@ class BookService implements IBookService {
   checkBookIdValidOrThrowError(bookId: BookData['_id'] | string) {
     const genreIdNotValid = !isValidObjectId(bookId);
     if (genreIdNotValid) {
-      throw new Error(`GenreService: genreId is not valid.`);
+      throw new Error(`BookService: genreId is not valid.`);
     }
   }
 }

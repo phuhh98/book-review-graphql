@@ -1,13 +1,9 @@
 import { Schema } from 'mongoose';
 import moment from 'moment';
-import {
-  BOOK_FIELDS,
-  GENRE_BOOK_REL_FIELDS,
-  MODEL_ALIAS,
-} from '../../constants';
 import { isDate } from 'util/types';
-import { GenreBookRelModel } from '..';
+import { GenreBookRelModel, ImageGridFsBucket } from '..';
 import { BookData } from '../../types/models';
+import { createMongoObjectIdFromString } from 'src/utils';
 
 const BookSchema = new Schema<BookData>(
   {
@@ -18,6 +14,7 @@ const BookSchema = new Schema<BookData>(
     },
     description: String,
     rating: Number,
+    cover_image: String,
     publish_date: {
       type: Date,
       validate: {
@@ -34,18 +31,19 @@ const BookSchema = new Schema<BookData>(
   },
 );
 
-BookSchema.virtual('genres', {
-  ref: MODEL_ALIAS.GenreBookRel,
-  localField: BOOK_FIELDS._id,
-  foreignField: GENRE_BOOK_REL_FIELDS.bookId,
-});
-
 // clear relations on delete
 BookSchema.pre<BookData>('deleteOne', async function (next) {
-  const session = await GenreBookRelModel.startSession();
+  const bookCurrent = this;
+
+  // clear book in genres when book is deleted
   GenreBookRelModel.deleteMany({
-    [GENRE_BOOK_REL_FIELDS.bookId]: this._id,
-  }).session(session);
+    bookId: bookCurrent._id,
+  }).session(await GenreBookRelModel.startSession());
+
+  // clear Image in GridFs when delete
+  ImageGridFsBucket.delete(
+    createMongoObjectIdFromString(bookCurrent.cover_image.toString()),
+  );
   next();
 });
 

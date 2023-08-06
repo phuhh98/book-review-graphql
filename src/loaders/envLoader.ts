@@ -14,6 +14,7 @@ declare global {
       MONGODB_DBNAME: string;
       CLUSTER_MODE: 'on' | 'off' | undefined;
       ALLOWED_ORIGINS: string;
+      SERVER_URL: string;
     }
   }
 }

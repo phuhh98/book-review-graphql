@@ -6,10 +6,10 @@ Table book {
     _id ObjectID [pk]
     title String
     description String
-    rating Number
+    // rating Number
     publish_date Date
     publisher String
-    // cover_image BinaryData [ref:  - image._id]
+    cover_image String [ref:  - image.uri]
     // v_authors "author[]"
     v_genres "genre[]"
     created_at Timestamp
@@ -27,9 +27,15 @@ Table genre {
 }
 
 Table genre_book {
-    
     bookId ObjectID [ref: > book._id]
     genreId ObjectID [ref: > genre._id]
+}
+
+Table image {
+  _id ObjectID [pk]
+  docType String
+  uri String
+  file BinaryData
 }
 
 // Table user {
@@ -62,12 +68,7 @@ Table genre_book {
 
 
 
-// Table image {
-//   _id ObjectID [pk]
-//   mime_type String
-//   name String
-//   data BinaryData
-// }
+
 
 // Table review {
 //   _id ObjectID [pk]

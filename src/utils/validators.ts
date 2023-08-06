@@ -1,5 +1,4 @@
 import Joi from 'joi';
-import mongoose from 'mongoose';
 
 const DateSchema = Joi.date().required();
 
@@ -10,10 +9,6 @@ export const isDate = (data: string) => {
   } else {
     return true;
   }
-};
-
-export const isValidObjectId = (id: string) => {
-  return mongoose.Types.ObjectId.isValid(id);
 };
 
 export const isJSON = (str: string | undefined): boolean => {

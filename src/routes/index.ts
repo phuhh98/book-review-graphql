@@ -1,21 +1,28 @@
-import { Application, RequestHandler } from 'express';
+import { Application } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { BookModel, GenreModel, GenreBookRelModel } from '../models';
 import { bookRouter } from './book';
 import { genreRouter } from './genre';
 import { healthcheckRouter } from './helthcheck';
 import { getApolloMiddleware } from './graphql';
 import { errorMiddleware } from '../middlewares';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
+import { MEGA_BYTE, REST_PATH } from 'src/constants';
+import { imageRouter } from './image';
 
 export async function applyRoutes(app: Application) {
   const apolloMidleware = await getApolloMiddleware(app);
+  const MAX_FILES_PER_UPLOAD = 10;
 
-  app.use('/book', bookRouter);
-  app.use('/genre', genreRouter);
-  app.use('/graphql', apolloMidleware);
+  app.use(`/${REST_PATH.BOOK}`, bookRouter);
+  app.use(`/${REST_PATH.GENRE}`, genreRouter);
+  app.use(`/${REST_PATH.IMAGE}`, imageRouter);
+  app.use(
+    '/graphql',
+    graphqlUploadExpress({ maxFileSize: 2 * MEGA_BYTE, maxFiles: MAX_FILES_PER_UPLOAD }),
+    apolloMidleware,
+  );
 
   app.use('/healthz', healthcheckRouter);
-  // app.use('/', indexPageHanlder);
 
   app.all('*', (_, res) => {
     res.status(StatusCodes.NOT_FOUND).send('This route does not exist');
@@ -23,71 +30,3 @@ export async function applyRoutes(app: Application) {
 
   app.use(errorMiddleware);
 }
-
-//eslint-disable-next-line
-const indexPageHanlder: RequestHandler = async (_, res) => {
-  try {
-    const session = await BookModel.startSession();
-    const book = await BookModel.aggregate(
-      [
-        {
-          $match: {
-            title: {
-              $regex: 'wind',
-              $options: 'i',
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: GenreBookRelModel.collection.name,
-            let: { idFromFoundBook: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: { $eq: ['$$idFromFoundBook', '$bookId'] },
-                },
-              },
-              {
-                $lookup: {
-                  from: GenreModel.collection.name,
-                  let: { genreIdFromGBL: '$genreId' },
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: { $eq: ['$_id', '$$genreIdFromGBL'] },
-                      },
-                    },
-                    {
-                      $project: {
-                        _id: 1,
-                        name: 1,
-                      },
-                    },
-                  ],
-                  as: 'genreNodeFromGenre',
-                },
-              },
-              { $unwind: '$genreNodeFromGenre' },
-              {
-                $replaceWith: '$genreNodeFromGenre',
-              },
-            ],
-            as: 'genres',
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            __v: 0,
-          },
-        },
-      ],
-      { session: session },
-    );
-
-    res.status(StatusCodes.OK).send(book);
-  } catch (err) {
-    res.status(StatusCodes.BAD_REQUEST).send(err);
-  }
-};

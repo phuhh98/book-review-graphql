@@ -1,7 +1,8 @@
 import { IGenreService } from './types';
 import { BookModel, GenreBookRelModel, GenreModel } from '../models';
-import mongoose, { isValidObjectId } from 'mongoose';
+import { isValidObjectId } from 'mongoose';
 import { GenreData } from '../types/models';
+import { createMongoObjectIdFromString } from 'src/utils';
 
 class GenreService implements IGenreService {
   async addOne(genreData: GenreData): Promise<GenreData | null> {
@@ -12,21 +13,29 @@ class GenreService implements IGenreService {
     return newGenre;
   }
 
-  async getOneById(
-    genreId: GenreData['_id'] | string,
-  ): Promise<GenreData | null> {
+  async getOneById(genreId: GenreData['_id'] | string): Promise<GenreData | null> {
     this.checkGenreIdValidOrThrowError(genreId);
-    const genreAggregatedResult =
-      await this.getAggregatedGenreWithBooksByGenreId(genreId);
+    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreId(
+      genreId,
+    );
 
     return genreAggregatedResult.length !== 0 ? genreAggregatedResult[0] : null;
   }
 
   async getOneByName(genreName: GenreData['name']): Promise<GenreData | null> {
-    const genreAggregatedResult =
-      await this.getAggregatedGenreWithBooksByGenreName(genreName);
+    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreName(
+      genreName,
+    );
 
     return genreAggregatedResult.length !== 0 ? genreAggregatedResult[0] : null;
+  }
+
+  async getGenresWithName(genreName: string): Promise<GenreData[] | []> {
+    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreName(
+      genreName,
+    );
+
+    return genreAggregatedResult;
   }
 
   async updateOneById(
@@ -56,7 +65,7 @@ class GenreService implements IGenreService {
       [
         {
           $match: {
-            _id: new mongoose.Types.ObjectId(genreId as string),
+            _id: createMongoObjectIdFromString(genreId as string),
           },
         },
         {

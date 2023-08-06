@@ -10,3 +10,11 @@ export const GenreBookRelModel = mongoose.model(
   MODEL_ALIAS.GenreBookRel,
   GenreBookRelSchema,
 );
+
+// GridFs for Image to manage image media
+export let ImageGridFsBucket: mongoose.mongo.GridFSBucket;
+mongoose.connection.on('connected', () => {
+  ImageGridFsBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: MODEL_ALIAS.Image,
+  });
+});
