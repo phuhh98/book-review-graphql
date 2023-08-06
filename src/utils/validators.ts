@@ -18,9 +18,8 @@ export const isValidObjectId = (id: string) => {
 
 export const isJSON = (str: string | undefined): boolean => {
   try {
-    return JSON.parse(str as string) && !!str;
+    return !!str && !!JSON.parse(str);
   } catch (e) {
     return false;
   }
-  return true;
 };
