@@ -4,12 +4,22 @@ import { GraphqlContext } from './context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = {
+  [_ in K]?: never;
+};
+export type Incremental<T> =
+  | T
+  | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]-?: NonNullable<T[P]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string };
@@ -17,12 +27,15 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
-  /** Represent binary which used for file data */
-  Binary: { input: any; output: any };
-  /** Date type */
+  /** Date in ISO */
   Date: { input: any; output: any };
+  /** URI for assets */
+  URI: { input: any; output: any };
+  /** Upload represents file data in multipart/form-data */
+  Upload: { input: any; output: any };
 };
 
+/** Author data representation */
 export type Author = {
   __typename?: 'Author';
   bio?: Maybe<Scalars['String']['output']>;
@@ -33,9 +46,10 @@ export type Author = {
   user?: Maybe<User>;
 };
 
+/** Book data representation */
 export type Book = {
   __typename?: 'Book';
-  cover_image?: Maybe<Scalars['Binary']['output']>;
+  cover_image?: Maybe<Scalars['URI']['output']>;
   created_at: Scalars['Date']['output'];
   description?: Maybe<Scalars['String']['output']>;
   genres?: Maybe<Array<Maybe<Genre>>>;
@@ -47,6 +61,7 @@ export type Book = {
   updated_at: Scalars['Date']['output'];
 };
 
+/** Genre data representation */
 export type Genre = {
   __typename?: 'Genre';
   alias?: Maybe<Scalars['String']['output']>;
@@ -60,11 +75,21 @@ export type Genre = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  /** Create Genre - Book relation */
   addBookToGenre: Genre;
+  /** Create Genre - Book relation */
   addGenreToBook: Book;
+  /** Create a new Book record */
   createBook: Book;
+  /** Create a new Genre record */
   createGenre: Genre;
+  /** Remove Genre - Book relation */
   removeBookFromGenre: Genre;
+  /**
+   * Upload a book's cover_image which contain in a multipart/form-data
+   * need to provide a non-empty value for one of the following headers: x-apollo-operation-name, apollo-require-preflight
+   */
+  uploadBookCoverImage?: Maybe<UploadResult>;
 };
 
 export type MutationAddBookToGenreArgs = {
@@ -95,15 +120,20 @@ export type MutationRemoveBookFromGenreArgs = {
   genreId: Scalars['ID']['input'];
 };
 
+export type MutationUploadBookCoverImageArgs = {
+  bookId: Scalars['ID']['input'];
+  cover_image: Scalars['Upload']['input'];
+};
+
 export type Query = {
   __typename?: 'Query';
   /** Get a book's detail by its id */
   bookById: Book;
-  /** Get a list of books by search with its title */
+  /** Get a list of books by search with its title which contains the provided string */
   booksByTitle: Array<Maybe<Book>>;
   /** Get a genre's details by its id */
   genreById: Genre;
-  /** Get a list of genres by search with its name */
+  /** Get a list of genres by search with its name which contains the provied string */
   genresByName: Array<Maybe<Genre>>;
 };
 
@@ -123,10 +153,17 @@ export type QueryGenresByNameArgs = {
   name: Scalars['String']['input'];
 };
 
+export type UploadResult = {
+  __typename?: 'UploadResult';
+  book?: Maybe<Book>;
+  message?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
 /** User data representation */
 export type User = {
   __typename?: 'User';
-  avatar?: Maybe<Scalars['Binary']['output']>;
+  avatar?: Maybe<Scalars['URI']['output']>;
   created_at: Scalars['Date']['output'];
   date_of_birth?: Maybe<Scalars['Date']['output']>;
   email: Scalars['String']['output'];
@@ -169,8 +206,19 @@ export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   info: GraphQLResolveInfo,
 ) => TResult | Promise<TResult>;
 
-export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
-  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
+export interface SubscriptionSubscriberObject<
+  TResult,
+  TKey extends string,
+  TParent,
+  TContext,
+  TArgs,
+> {
+  subscribe: SubscriptionSubscribeFn<
+    { [key in TKey]: TResult },
+    TParent,
+    TContext,
+    TArgs
+  >;
   resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
 }
 
@@ -183,7 +231,13 @@ export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, 
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
 
-export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
+export type SubscriptionResolver<
+  TResult,
+  TKey extends string,
+  TParent = {},
+  TContext = {},
+  TArgs = {},
+> =
   | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
 
@@ -217,7 +271,6 @@ export type ResolversTypes = ResolversObject<{
       user?: Maybe<ResolversTypes['User']>;
     }
   >;
-  Binary: ResolverTypeWrapper<Scalars['Binary']['output']>;
   Book: ResolverTypeWrapper<BookData>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Date: ResolverTypeWrapper<Scalars['Date']['output']>;
@@ -227,7 +280,14 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
-  User: ResolverTypeWrapper<Omit<User, 'read_books'> & { read_books: Array<Maybe<ResolversTypes['Book']>> }>;
+  URI: ResolverTypeWrapper<Scalars['URI']['output']>;
+  Upload: ResolverTypeWrapper<Scalars['Upload']['output']>;
+  UploadResult: ResolverTypeWrapper<
+    Omit<UploadResult, 'book'> & { book?: Maybe<ResolversTypes['Book']> }
+  >;
+  User: ResolverTypeWrapper<
+    Omit<User, 'read_books'> & { read_books: Array<Maybe<ResolversTypes['Book']>> }
+  >;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -236,7 +296,6 @@ export type ResolversParentTypes = ResolversObject<{
     books: Array<Maybe<ResolversParentTypes['Book']>>;
     user?: Maybe<ResolversParentTypes['User']>;
   };
-  Binary: Scalars['Binary']['output'];
   Book: BookData;
   Boolean: Scalars['Boolean']['output'];
   Date: Scalars['Date']['output'];
@@ -246,7 +305,14 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
-  User: Omit<User, 'read_books'> & { read_books: Array<Maybe<ResolversParentTypes['Book']>> };
+  URI: Scalars['URI']['output'];
+  Upload: Scalars['Upload']['output'];
+  UploadResult: Omit<UploadResult, 'book'> & {
+    book?: Maybe<ResolversParentTypes['Book']>;
+  };
+  User: Omit<User, 'read_books'> & {
+    read_books: Array<Maybe<ResolversParentTypes['Book']>>;
+  };
 }>;
 
 export type AuthorResolvers<
@@ -262,18 +328,18 @@ export type AuthorResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export interface BinaryScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Binary'], any> {
-  name: 'Binary';
-}
-
 export type BookResolvers<
   ContextType = GraphqlContext,
   ParentType extends ResolversParentTypes['Book'] = ResolversParentTypes['Book'],
 > = ResolversObject<{
-  cover_image?: Resolver<Maybe<ResolversTypes['Binary']>, ParentType, ContextType>;
+  cover_image?: Resolver<Maybe<ResolversTypes['URI']>, ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  genres?: Resolver<Maybe<Array<Maybe<ResolversTypes['Genre']>>>, ParentType, ContextType>;
+  genres?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Genre']>>>,
+    ParentType,
+    ContextType
+  >;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   publish_date?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   publisher?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -283,7 +349,8 @@ export type BookResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+export interface DateScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date';
 }
 
@@ -335,20 +402,36 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationRemoveBookFromGenreArgs, 'bookId' | 'genreId'>
   >;
+  uploadBookCoverImage?: Resolver<
+    Maybe<ResolversTypes['UploadResult']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUploadBookCoverImageArgs, 'bookId' | 'cover_image'>
+  >;
 }>;
 
 export type QueryResolvers<
   ContextType = GraphqlContext,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query'],
 > = ResolversObject<{
-  bookById?: Resolver<ResolversTypes['Book'], ParentType, ContextType, RequireFields<QueryBookByIdArgs, 'id'>>;
+  bookById?: Resolver<
+    ResolversTypes['Book'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryBookByIdArgs, 'id'>
+  >;
   booksByTitle?: Resolver<
     Array<Maybe<ResolversTypes['Book']>>,
     ParentType,
     ContextType,
     RequireFields<QueryBooksByTitleArgs, 'title'>
   >;
-  genreById?: Resolver<ResolversTypes['Genre'], ParentType, ContextType, RequireFields<QueryGenreByIdArgs, 'id'>>;
+  genreById?: Resolver<
+    ResolversTypes['Genre'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGenreByIdArgs, 'id'>
+  >;
   genresByName?: Resolver<
     Array<Maybe<ResolversTypes['Genre']>>,
     ParentType,
@@ -357,11 +440,32 @@ export type QueryResolvers<
   >;
 }>;
 
+export interface UriScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['URI'], any> {
+  name: 'URI';
+}
+
+export interface UploadScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
+
+export type UploadResultResolvers<
+  ContextType = GraphqlContext,
+  ParentType extends
+    ResolversParentTypes['UploadResult'] = ResolversParentTypes['UploadResult'],
+> = ResolversObject<{
+  book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType>;
+  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type UserResolvers<
   ContextType = GraphqlContext,
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User'],
 > = ResolversObject<{
-  avatar?: Resolver<Maybe<ResolversTypes['Binary']>, ParentType, ContextType>;
+  avatar?: Resolver<Maybe<ResolversTypes['URI']>, ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   date_of_birth?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -374,11 +478,13 @@ export type UserResolvers<
 
 export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
   Author?: AuthorResolvers<ContextType>;
-  Binary?: GraphQLScalarType;
   Book?: BookResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Genre?: GenreResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  URI?: GraphQLScalarType;
+  Upload?: GraphQLScalarType;
+  UploadResult?: UploadResultResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;

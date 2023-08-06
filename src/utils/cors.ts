@@ -8,11 +8,18 @@ const ALLOWED_ORIGINS =
 
 const PORT = parseInt(process.env.SERVER_PORT, 10);
 
-const WHITELIST = [`http://localhost:${PORT}`, ...ALLOWED_ORIGINS];
+const WHITELIST = [
+  `http://localhost:${PORT}`,
+  ...ALLOWED_ORIGINS,
+  process.env.SERVER_URL,
+];
 
 export const CORS_OPTIONS: CorsOptions = {
   origin: (origin, callback) => {
-    if (WHITELIST.some((allowedMember) => !!origin && allowedMember.includes(origin)) || !origin) {
+    if (
+      WHITELIST.some((allowedMember) => !!origin && allowedMember.includes(origin)) ||
+      !origin
+    ) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

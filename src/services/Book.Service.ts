@@ -1,7 +1,8 @@
 import { IBookService } from './types';
 import { BookModel, GenreBookRelModel, GenreModel } from '../models';
-import mongoose, { isValidObjectId } from 'mongoose';
+import { isValidObjectId } from 'mongoose';
 import { BookData } from '../types/models';
+import { createMongoObjectIdFromString } from 'src/utils';
 
 class BookService implements IBookService {
   async addOne(bookData: BookData): Promise<BookData | null> {
@@ -31,23 +32,33 @@ class BookService implements IBookService {
     return bookAggregateResult;
   }
 
-  async updateOneById(bookId: BookData['_id'] | string, updateData: BookData): Promise<void> {
+  async updateOneById(
+    bookId: BookData['_id'] | string,
+    updateData: BookData,
+  ): Promise<void> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    await BookModel.updateOne({ _id: bookId }, { ...updateData }).session(await this.getTransactionSession());
+    await BookModel.updateOne(
+      { _id: createMongoObjectIdFromString(bookId as string) },
+      { ...updateData },
+    ).session(await this.getTransactionSession());
   }
 
   async deleteOneById(bookId: BookData['_id'] | string): Promise<void> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    await BookModel.deleteOne({ _id: bookId }).session(await this.getTransactionSession());
+    await BookModel.deleteOne({ _id: bookId }).session(
+      await this.getTransactionSession(),
+    );
   }
 
   async getTransactionSession() {
     return await BookModel.startSession();
   }
 
-  async getAggregatedBookWithGenresById(bookId: BookData['_id'] | string): Promise<BookData[]> {
+  async getAggregatedBookWithGenresById(
+    bookId: BookData['_id'] | string,
+  ): Promise<BookData[]> {
     // aggreate match and populate with genres, sort by title asc
     this.checkBookIdValidOrThrowError(bookId);
 
@@ -55,7 +66,7 @@ class BookService implements IBookService {
       [
         {
           $match: {
-            _id: new mongoose.Types.ObjectId(bookId as string),
+            _id: createMongoObjectIdFromString(bookId as string),
           },
         },
         {
@@ -130,7 +141,9 @@ class BookService implements IBookService {
     );
   }
 
-  async getAggregatedBookWithGenresByTitle(bookTitle: BookData['title']): Promise<BookData[]> {
+  async getAggregatedBookWithGenresByTitle(
+    bookTitle: BookData['title'],
+  ): Promise<BookData[]> {
     // aggreate match and populate with genres, sort by title asc
 
     return await BookModel.aggregate<BookData>(
@@ -218,7 +231,7 @@ class BookService implements IBookService {
   checkBookIdValidOrThrowError(bookId: BookData['_id'] | string) {
     const genreIdNotValid = !isValidObjectId(bookId);
     if (genreIdNotValid) {
-      throw new Error(`GenreService: genreId is not valid.`);
+      throw new Error(`BookService: genreId is not valid.`);
     }
   }
 }

@@ -1,7 +1,8 @@
 import { IGenreService } from './types';
 import { BookModel, GenreBookRelModel, GenreModel } from '../models';
-import mongoose, { isValidObjectId } from 'mongoose';
+import { isValidObjectId } from 'mongoose';
 import { GenreData } from '../types/models';
+import { createMongoObjectIdFromString } from 'src/utils';
 
 class GenreService implements IGenreService {
   async addOne(genreData: GenreData): Promise<GenreData | null> {
@@ -14,34 +15,49 @@ class GenreService implements IGenreService {
 
   async getOneById(genreId: GenreData['_id'] | string): Promise<GenreData | null> {
     this.checkGenreIdValidOrThrowError(genreId);
-    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreId(genreId);
+    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreId(
+      genreId,
+    );
 
     return genreAggregatedResult.length !== 0 ? genreAggregatedResult[0] : null;
   }
 
   async getOneByName(genreName: GenreData['name']): Promise<GenreData | null> {
-    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreName(genreName);
+    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreName(
+      genreName,
+    );
 
     return genreAggregatedResult.length !== 0 ? genreAggregatedResult[0] : null;
   }
 
   async getGenresWithName(genreName: string): Promise<GenreData[] | []> {
-    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreName(genreName);
+    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreName(
+      genreName,
+    );
 
     return genreAggregatedResult;
   }
 
-  async updateOneById(genreId: GenreData['_id'] | string, updateData: GenreData): Promise<void> {
+  async updateOneById(
+    genreId: GenreData['_id'] | string,
+    updateData: GenreData,
+  ): Promise<void> {
     this.checkGenreIdValidOrThrowError(genreId);
-    await GenreModel.updateOne({ _id: genreId }, { ...updateData }).session(await this.getTransactionSession());
+    await GenreModel.updateOne({ _id: genreId }, { ...updateData }).session(
+      await this.getTransactionSession(),
+    );
   }
 
   async deleteOneById(genreId: GenreData['_id'] | string): Promise<void> {
     this.checkGenreIdValidOrThrowError(genreId);
-    await GenreModel.deleteOne({ _id: genreId }).session(await this.getTransactionSession());
+    await GenreModel.deleteOne({ _id: genreId }).session(
+      await this.getTransactionSession(),
+    );
   }
 
-  async getAggregatedGenreWithBooksByGenreId(genreId: GenreData['_id'] | string): Promise<GenreData[]> {
+  async getAggregatedGenreWithBooksByGenreId(
+    genreId: GenreData['_id'] | string,
+  ): Promise<GenreData[]> {
     // aggreate match and populate with genres, sort by title asc
     this.checkGenreIdValidOrThrowError(genreId);
 
@@ -49,7 +65,7 @@ class GenreService implements IGenreService {
       [
         {
           $match: {
-            _id: new mongoose.Types.ObjectId(genreId as string),
+            _id: createMongoObjectIdFromString(genreId as string),
           },
         },
         {
@@ -115,7 +131,9 @@ class GenreService implements IGenreService {
     );
   }
 
-  async getAggregatedGenreWithBooksByGenreName(genreName: GenreData['name']): Promise<GenreData[]> {
+  async getAggregatedGenreWithBooksByGenreName(
+    genreName: GenreData['name'],
+  ): Promise<GenreData[]> {
     return await GenreModel.aggregate<GenreData>(
       [
         {

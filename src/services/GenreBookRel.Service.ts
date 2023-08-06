@@ -1,13 +1,16 @@
 import { IGenreBookRelService } from './types';
 import { GenreBookRelModel } from '../models';
-import mongoose, { isValidObjectId } from 'mongoose';
-import { GENRE_BOOK_REL_FIELDS } from '../constants';
+import { isValidObjectId } from 'mongoose';
 import { BookData, GenreBookRelData, GenreData } from '../types/models';
 import BookService from './Book.Service';
 import GenreService from './Genre.Service';
+import { createMongoObjectIdFromString } from 'src/utils';
 
 class GenreBookRelService implements IGenreBookRelService {
-  async addOne(bookId: BookData['_id'] | string, genreId: GenreData['_id'] | string): Promise<GenreBookRelData> {
+  async addOne(
+    bookId: BookData['_id'] | string,
+    genreId: GenreData['_id'] | string,
+  ): Promise<GenreBookRelData> {
     this.checkIdPairValidOrThrowError(bookId, genreId);
 
     const book = await BookService.getOneById(bookId);
@@ -25,15 +28,18 @@ class GenreBookRelService implements IGenreBookRelService {
     return newGBL;
   }
 
-  async deleteGenreBookRel(bookId: BookData['_id'] | string, genreId: GenreData['_id'] | string): Promise<void> {
+  async deleteGenreBookRel(
+    bookId: BookData['_id'] | string,
+    genreId: GenreData['_id'] | string,
+  ): Promise<void> {
     this.checkIdPairValidOrThrowError(bookId, genreId);
 
     await GenreBookRelModel.deleteOne({
-      [GENRE_BOOK_REL_FIELDS.bookId]: {
-        $eq: new mongoose.Types.ObjectId(bookId as string),
+      bookId: {
+        $eq: createMongoObjectIdFromString(bookId as string),
       },
-      [GENRE_BOOK_REL_FIELDS.genreId]: {
-        $eq: new mongoose.Types.ObjectId(genreId as string),
+      genreId: {
+        $eq: createMongoObjectIdFromString(genreId as string),
       },
     });
   }
@@ -42,7 +48,10 @@ class GenreBookRelService implements IGenreBookRelService {
     return await GenreBookRelModel.startSession();
   }
 
-  checkIdPairValidOrThrowError(bookId: BookData['_id'] | string, genreId: GenreData['_id'] | string): void {
+  checkIdPairValidOrThrowError(
+    bookId: BookData['_id'] | string,
+    genreId: GenreData['_id'] | string,
+  ): void {
     const bookIdNotValid = !isValidObjectId(bookId);
     const genreIdNotValid = !isValidObjectId(genreId);
     if (bookIdNotValid || genreIdNotValid)

@@ -5,6 +5,7 @@ import {
   booksByTitleResolver,
   bookTypeResolver,
   createBookResolver,
+  uploadImageResolver,
 } from './book';
 import {
   createGenreResolver,
@@ -13,6 +14,8 @@ import {
   genreTypeResolver,
   removeBookFromGenreResolver,
 } from './genre';
+
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 
 export const resolvers: Resolvers = {
   Query: {
@@ -26,7 +29,9 @@ export const resolvers: Resolvers = {
     createGenre: createGenreResolver,
     addGenreToBook: addGenreToBookResolver,
     removeBookFromGenre: removeBookFromGenreResolver,
+    uploadBookCoverImage: uploadImageResolver,
   },
   Book: bookTypeResolver,
   Genre: genreTypeResolver,
+  Upload: GraphQLUpload,
 };

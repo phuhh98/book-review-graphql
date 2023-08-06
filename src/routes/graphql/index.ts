@@ -11,9 +11,12 @@ import path from 'path';
 import { readFileSync } from 'fs';
 import { resolvers } from '../../graphql';
 
-export const typeDefs = readFileSync(path.resolve(__dirname, '../../graphql/typeDefs.gql'), {
-  encoding: 'utf-8',
-});
+export const typeDefs = readFileSync(
+  path.resolve(__dirname, '../../graphql/typeDefs.gql'),
+  {
+    encoding: 'utf-8',
+  },
+);
 
 export async function getApolloServer(app: Application) {
   const httpServer = http.createServer(app);
@@ -32,6 +35,7 @@ export async function getApolloServer(app: Application) {
     ],
     introspection: process.env.ENV !== ENV.ENV_PROD ? true : false,
     includeStacktraceInErrorResponses: process.env.ENV === ENV.ENV_DEV ? true : false,
+    csrfPrevention: true,
   });
   await apolloServer.start();
   return apolloServer;

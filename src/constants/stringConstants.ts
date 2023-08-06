@@ -1,44 +1,23 @@
-import { BookFields, GeneralFields, GenreBookRelFields, GenreFields } from 'src/types/constant';
-
 export const ENV = {
   ENV_DEV: 'DEV',
   ENV_PROD: 'PROD',
   IS_DOCKER: 'true',
 };
 
+export const URL = {
+  LOCAL_URL: 'http://localhost',
+};
+
+export const REST_PATH = {
+  IMAGE: 'image',
+  BOOK: 'book',
+  GENRE: 'genre',
+  GRAPHQL: 'graphql',
+};
+
 export const MODEL_ALIAS = {
   Book: 'Book',
   Genre: 'Genre',
   GenreBookRel: 'GenreBookRel',
-};
-
-export const GENERAL_FIELDS: GeneralFields = {
-  _id: '_id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-};
-
-export const BOOK_FIELDS: BookFields & { genres: 'genres' } = {
-  ...GENERAL_FIELDS,
-  title: 'title',
-  description: 'description',
-  rating: 'rating',
-  publish_date: 'publish_date',
-  publisher: 'publisher',
-  genres: 'genres',
-};
-
-export const GENRE_FIELDS: GenreFields & {
-  books: 'books';
-} = {
-  ...GENERAL_FIELDS,
-  name: 'name',
-  alias: 'alias',
-  description: 'description',
-  books: 'books',
-};
-
-export const GENRE_BOOK_REL_FIELDS: GenreBookRelFields = {
-  bookId: 'bookId',
-  genreId: 'genreId',
+  Image: 'Image',
 };

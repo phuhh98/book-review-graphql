@@ -1,17 +1,20 @@
-"Date type"
+"Date in ISO"
 scalar Date
 
-"Represent binary which used for file data"
-scalar Binary
+"URI for assets"
+scalar URI
+
+"Upload represents file data in multipart/form-data"
+scalar Upload
 
 type Query {
-  "Get a list of books by search with its title"
+  "Get a list of books by search with its title which contains the provided string"
   booksByTitle(title: String!): [Book]!
 
   "Get a book's detail by its id"
   bookById(id: ID!): Book!
 
-  "Get a list of genres by search with its name"
+  "Get a list of genres by search with its name which contains the provied string"
   genresByName(name: String!): [Genre]!
 
   "Get a genre's details by its id"
@@ -19,11 +22,37 @@ type Query {
 }
 
 type Mutation {
-  createBook(title: String!, description: String, publish_date: Date, publisher: String): Book!
+  "Create a new Book record"
+  createBook(
+    title: String!
+    description: String
+    publish_date: Date
+    publisher: String
+  ): Book!
+
+  "Create a new Genre record"
   createGenre(name: String!, description: String, alias: String): Genre!
+
+  "Create Genre - Book relation"
   addGenreToBook(genreId: ID!, bookId: ID!): Book!
+
+  "Create Genre - Book relation"
   addBookToGenre(genreId: ID!, bookId: ID!): Genre!
+
+  "Remove Genre - Book relation"
   removeBookFromGenre(genreId: ID!, bookId: ID!): Genre!
+
+  """
+  Upload a book's cover_image which contain in a multipart/form-data
+  need to provide a non-empty value for one of the following headers: x-apollo-operation-name, apollo-require-preflight
+  """
+  uploadBookCoverImage(cover_image: Upload!, bookId: ID!): UploadResult
+}
+
+type UploadResult {
+  success: Boolean!
+  message: String
+  book: Book
 }
 
 "User data representation"
@@ -32,12 +61,13 @@ type User {
   full_name: String
   email: String!
   date_of_birth: Date
-  avatar: Binary
+  avatar: URI
   read_books: [Book]!
   created_at: Date!
   updated_at: Date!
 }
 
+"Author data representation"
 type Author {
   id: ID!
   bio: String
@@ -47,6 +77,7 @@ type Author {
   updated_at: Date!
 }
 
+"Book data representation"
 type Book {
   id: ID!
   title: String!
@@ -54,12 +85,13 @@ type Book {
   rating: Float
   publish_date: Date
   publisher: String
-  cover_image: Binary
+  cover_image: URI
   created_at: Date!
   updated_at: Date!
   genres: [Genre]
 }
 
+"Genre data representation"
 type Genre {
   id: ID!
   name: String!
