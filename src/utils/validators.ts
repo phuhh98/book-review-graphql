@@ -16,7 +16,7 @@ export const isValidObjectId = (id: string) => {
   return mongoose.Types.ObjectId.isValid(id);
 };
 
-export const isJSON = (str: string | undefined) => {
+export const isJSON = (str: string | undefined): boolean => {
   try {
     return JSON.parse(str as string) && !!str;
   } catch (e) {
