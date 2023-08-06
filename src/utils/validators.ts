@@ -22,4 +22,5 @@ export const isJSON = (str: string | undefined): boolean => {
   } catch (e) {
     return false;
   }
+  return true;
 };
