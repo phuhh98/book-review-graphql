@@ -1,9 +1,5 @@
 import { Schema } from 'mongoose';
-import {
-  GENERAL_FIELDS,
-  GENRE_BOOK_REL_FIELDS,
-  MODEL_ALIAS,
-} from '../../constants/index';
+import { GENERAL_FIELDS, GENRE_BOOK_REL_FIELDS, MODEL_ALIAS } from '../../constants/index';
 import { GenreBookRelModel } from '..';
 import { GenreData } from '../../types/models';
 
@@ -18,7 +14,7 @@ const GenreSchema = new Schema<GenreData>(
     alias: {
       type: String,
       lowercase: true,
-      unique: true,
+      sparse: true,
     },
     description: String,
   },

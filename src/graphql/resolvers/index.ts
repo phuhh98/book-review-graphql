@@ -1,21 +1,31 @@
-import { Resolvers } from '../../types';
+import { Resolvers } from 'src/types';
 import {
+  addGenreToBookResolver,
   bookByIdResolver,
-  bookByTitleResolver,
+  booksByTitleResolver,
   bookTypeResolver,
+  createBookResolver,
 } from './book';
 import {
+  createGenreResolver,
   genreByIdResolver,
-  genreByNameResolver,
+  genresByNameResolver,
   genreTypeResolver,
+  removeBookFromGenreResolver,
 } from './genre';
 
 export const resolvers: Resolvers = {
   Query: {
     bookById: bookByIdResolver,
-    bookByTitle: bookByTitleResolver,
+    booksByTitle: booksByTitleResolver,
     genreById: genreByIdResolver,
-    genreByName: genreByNameResolver,
+    genresByName: genresByNameResolver,
+  },
+  Mutation: {
+    createBook: createBookResolver,
+    createGenre: createGenreResolver,
+    addGenreToBook: addGenreToBookResolver,
+    removeBookFromGenre: removeBookFromGenreResolver,
   },
   Book: bookTypeResolver,
   Genre: genreTypeResolver,

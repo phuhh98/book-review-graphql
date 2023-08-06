@@ -1,14 +1,34 @@
-type Query {
-  bookByTitle(title: String): Book
-  bookById(id: ID): Book
-  genreByName(name: String): Genre
-  genreById(id: ID): Genre
-}
-
+"Date type"
 scalar Date
+
+"Represent binary which used for file data"
 scalar Binary
 
+type Query {
+  "Get a list of books by search with its title"
+  booksByTitle(title: String!): [Book]!
+
+  "Get a book's detail by its id"
+  bookById(id: ID!): Book!
+
+  "Get a list of genres by search with its name"
+  genresByName(name: String!): [Genre]!
+
+  "Get a genre's details by its id"
+  genreById(id: ID!): Genre!
+}
+
+type Mutation {
+  createBook(title: String!, description: String, publish_date: Date, publisher: String): Book!
+  createGenre(name: String!, description: String, alias: String): Genre!
+  addGenreToBook(genreId: ID!, bookId: ID!): Book!
+  addBookToGenre(genreId: ID!, bookId: ID!): Genre!
+  removeBookFromGenre(genreId: ID!, bookId: ID!): Genre!
+}
+
+"User data representation"
 type User {
+  id: ID!
   full_name: String
   email: String!
   date_of_birth: Date
@@ -19,6 +39,7 @@ type User {
 }
 
 type Author {
+  id: ID!
   bio: String
   user: User
   books: [Book]!

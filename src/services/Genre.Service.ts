@@ -12,43 +12,36 @@ class GenreService implements IGenreService {
     return newGenre;
   }
 
-  async getOneById(
-    genreId: GenreData['_id'] | string,
-  ): Promise<GenreData | null> {
+  async getOneById(genreId: GenreData['_id'] | string): Promise<GenreData | null> {
     this.checkGenreIdValidOrThrowError(genreId);
-    const genreAggregatedResult =
-      await this.getAggregatedGenreWithBooksByGenreId(genreId);
+    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreId(genreId);
 
     return genreAggregatedResult.length !== 0 ? genreAggregatedResult[0] : null;
   }
 
   async getOneByName(genreName: GenreData['name']): Promise<GenreData | null> {
-    const genreAggregatedResult =
-      await this.getAggregatedGenreWithBooksByGenreName(genreName);
+    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreName(genreName);
 
     return genreAggregatedResult.length !== 0 ? genreAggregatedResult[0] : null;
   }
 
-  async updateOneById(
-    genreId: GenreData['_id'] | string,
-    updateData: GenreData,
-  ): Promise<void> {
+  async getGenresWithName(genreName: string): Promise<GenreData[] | []> {
+    const genreAggregatedResult = await this.getAggregatedGenreWithBooksByGenreName(genreName);
+
+    return genreAggregatedResult === null ? [] : genreAggregatedResult;
+  }
+
+  async updateOneById(genreId: GenreData['_id'] | string, updateData: GenreData): Promise<void> {
     this.checkGenreIdValidOrThrowError(genreId);
-    await GenreModel.updateOne({ _id: genreId }, { ...updateData }).session(
-      await this.getTransactionSession(),
-    );
+    await GenreModel.updateOne({ _id: genreId }, { ...updateData }).session(await this.getTransactionSession());
   }
 
   async deleteOneById(genreId: GenreData['_id'] | string): Promise<void> {
     this.checkGenreIdValidOrThrowError(genreId);
-    await GenreModel.deleteOne({ _id: genreId }).session(
-      await this.getTransactionSession(),
-    );
+    await GenreModel.deleteOne({ _id: genreId }).session(await this.getTransactionSession());
   }
 
-  async getAggregatedGenreWithBooksByGenreId(
-    genreId: GenreData['_id'] | string,
-  ): Promise<GenreData[]> {
+  async getAggregatedGenreWithBooksByGenreId(genreId: GenreData['_id'] | string): Promise<GenreData[]> {
     // aggreate match and populate with genres, sort by title asc
     this.checkGenreIdValidOrThrowError(genreId);
 
@@ -122,9 +115,7 @@ class GenreService implements IGenreService {
     );
   }
 
-  async getAggregatedGenreWithBooksByGenreName(
-    genreName: GenreData['name'],
-  ): Promise<GenreData[]> {
+  async getAggregatedGenreWithBooksByGenreName(genreName: GenreData['name']): Promise<GenreData[]> {
     return await GenreModel.aggregate<GenreData>(
       [
         {

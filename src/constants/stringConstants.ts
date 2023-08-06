@@ -1,11 +1,7 @@
-import {
-  BookFields,
-  GeneralFields,
-  GenreBookRelFields,
-  GenreFields,
-} from '../types/constant';
+import { BookFields, GeneralFields, GenreBookRelFields, GenreFields } from 'src/types/constant';
 
 export const ENV = {
+  ENV_DEV: 'DEV',
   ENV_PROD: 'PROD',
   IS_DOCKER: 'true',
 };

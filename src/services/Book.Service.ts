@@ -15,46 +15,39 @@ class BookService implements IBookService {
   async getOneById(bookId: BookData['_id'] | string): Promise<BookData | null> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    const bookAggregateResult = await this.getAggregatedBookWithGenresById(
-      bookId,
-    );
+    const bookAggregateResult = await this.getAggregatedBookWithGenresById(bookId);
 
     return bookAggregateResult.length !== 0 ? bookAggregateResult[0] : null;
   }
 
   async getOneByTitle(bookTitle: BookData['title']): Promise<BookData | null> {
-    const bookAggregateResult = await this.getAggregatedBookWithGenresByTitle(
-      bookTitle,
-    );
+    const bookAggregateResult = await this.getAggregatedBookWithGenresByTitle(bookTitle);
     return bookAggregateResult.length !== 0 ? bookAggregateResult[0] : null;
   }
 
-  async updateOneById(
-    bookId: BookData['_id'] | string,
-    updateData: BookData,
-  ): Promise<void> {
+  async getBooksWithTitle(bookTitle: string): Promise<BookData[] | []> {
+    const bookAggregateResult = await this.getAggregatedBookWithGenresByTitle(bookTitle);
+
+    return bookAggregateResult === null ? [] : bookAggregateResult;
+  }
+
+  async updateOneById(bookId: BookData['_id'] | string, updateData: BookData): Promise<void> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    await BookModel.updateOne({ _id: bookId }, { ...updateData }).session(
-      await this.getTransactionSession(),
-    );
+    await BookModel.updateOne({ _id: bookId }, { ...updateData }).session(await this.getTransactionSession());
   }
 
   async deleteOneById(bookId: BookData['_id'] | string): Promise<void> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    await BookModel.deleteOne({ _id: bookId }).session(
-      await this.getTransactionSession(),
-    );
+    await BookModel.deleteOne({ _id: bookId }).session(await this.getTransactionSession());
   }
 
   async getTransactionSession() {
     return await BookModel.startSession();
   }
 
-  async getAggregatedBookWithGenresById(
-    bookId: BookData['_id'] | string,
-  ): Promise<BookData[]> {
+  async getAggregatedBookWithGenresById(bookId: BookData['_id'] | string): Promise<BookData[]> {
     // aggreate match and populate with genres, sort by title asc
     this.checkBookIdValidOrThrowError(bookId);
 
@@ -137,9 +130,7 @@ class BookService implements IBookService {
     );
   }
 
-  async getAggregatedBookWithGenresByTitle(
-    bookTitle: BookData['title'],
-  ): Promise<BookData[]> {
+  async getAggregatedBookWithGenresByTitle(bookTitle: BookData['title']): Promise<BookData[]> {
     // aggreate match and populate with genres, sort by title asc
 
     return await BookModel.aggregate<BookData>(

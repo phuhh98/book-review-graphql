@@ -10,7 +10,7 @@
     "lint": "eslint src/**/*.ts --fix",
     "prepare": "husky install",
     "generate": "graphql-codegen --config codegen.yml",
-    "copy": "copyfiles --flat src/graphql/*.gql dist/graphql/",
+    "copy": "copyfiles --flat src/graphql/*.gql dist/src/graphql/",
     "build": "tsc && npm run copy"
   },
   "keywords": [
