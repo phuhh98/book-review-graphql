@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { BookModel, GenreModel, GenreBookRelModel } from '../models';
 import { bookRouter } from './book';
 import { genreRouter } from './genre';
+import { healthcheckRouter } from './helthcheck';
 import { getApolloMiddleware } from './graphql';
 import { errorMiddleware } from '../middlewares';
 
@@ -13,6 +14,7 @@ export async function applyRoutes(app: Application) {
   app.use('/genre', genreRouter);
   app.use('/graphql', apolloMidleware);
 
+  app.use('/healthz', healthcheckRouter);
   // app.use('/', indexPageHanlder);
 
   app.all('*', (_, res) => {
