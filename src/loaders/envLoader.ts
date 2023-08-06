@@ -13,6 +13,7 @@ declare global {
       MONGODB_PASSWORD: string;
       MONGODB_DBNAME: string;
       CLUSTER_MODE: 'on' | 'off' | undefined;
+      ALLOWED_ORIGINS: string;
     }
   }
 }

@@ -15,3 +15,11 @@ export const isDate = (data: string) => {
 export const isValidObjectId = (id: string) => {
   return mongoose.Types.ObjectId.isValid(id);
 };
+
+export const isJSON = (str: string | undefined) => {
+  try {
+    return JSON.parse(str as string) && !!str;
+  } catch (e) {
+    return false;
+  }
+};
