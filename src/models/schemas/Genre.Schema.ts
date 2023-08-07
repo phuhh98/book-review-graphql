@@ -2,6 +2,8 @@ import { Schema } from 'mongoose';
 import { GenreData } from 'src/types';
 import { createMongoObjectIdFromString } from 'src/utils';
 import { GenreBookRelModel } from '..';
+import { GenreData } from '../../types/models';
+import { createMongoObjectIdFromString } from 'src/utils';
 
 const GenreSchema = new Schema<GenreData>(
   {

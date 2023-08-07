@@ -1,7 +1,7 @@
 import { Schema, Types } from 'mongoose';
-import { UserData } from 'src/types';
-import { MODEL_ALIAS } from 'src/constants';
 import { ProfileModel } from '..';
+import { UserData } from '../../types/models';
+import { MODEL_ALIAS } from 'src/constants';
 
 const UserSchema = new Schema<UserData>(
   {
