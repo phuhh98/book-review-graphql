@@ -3,10 +3,12 @@ import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 import { ImageGridFsBucket } from 'src/models';
 import BookService from 'src/services/Book.Service';
 import GenreBookRelService from 'src/services/GenreBookRel.Service';
-import { BookData, GenreBookRelData, GenreData, MutationResolvers } from 'src/types';
+import { BookData, GenreData, MutationResolvers } from 'src/types';
 import { createMongoObjectIdFromString } from 'src/utils';
 import { FileUpload } from 'graphql-upload/Upload.js';
 import GenreService from 'src/services/Genre.Service';
+import { ALLOW_IMAGE_EXT } from 'src/constants';
+import path from 'path';
 
 export const mutationResolver: Required<MutationResolvers> = {
   createBook: async (_, args) => {
@@ -108,9 +110,26 @@ export const mutationResolver: Required<MutationResolvers> = {
           createMongoObjectIdFromString(book.cover_image.toString()),
         );
       }
+    } catch (error) {
+      console.error(error);
+    }
 
-      // pipe readStream from request of a file to image writeStream of GridFs to write directly to mongodb
-      const { createReadStream, filename } = (await cover_image) as FileUpload;
+    // pipe readStream from request of a file to image writeStream of GridFs to write directly to mongodb
+    const { createReadStream, filename } = (await cover_image) as FileUpload;
+
+    if (!ALLOW_IMAGE_EXT.includes(path.extname(filename))) {
+      console.error('fileType', path.extname(filename));
+      throw new GraphQLError(
+        `Only ${ALLOW_IMAGE_EXT.join(' and ')} file(s) are allowed`,
+        {
+          extensions: {
+            code: getReasonPhrase(StatusCodes.BAD_REQUEST),
+          },
+        },
+      );
+    }
+
+    try {
       const imageWriteStream = ImageGridFsBucket.openUploadStream(filename);
       createReadStream().pipe(imageWriteStream);
 
