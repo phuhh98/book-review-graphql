@@ -16,7 +16,7 @@ export const ImageController: IImageController = {
     }
 
     const imageCursor = ImageGridFsBucket.find({
-      _id: createMongoObjectIdFromString(imageId as string),
+      _id: createMongoObjectIdFromString(imageId.toString()),
     });
     if ((await imageCursor.toArray()).length === 0) {
       return next(createNextErrorMessage(StatusCodes.NOT_FOUND, 'Asset not found'));

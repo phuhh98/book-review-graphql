@@ -39,7 +39,7 @@ class BookService implements IBookService {
     this.checkBookIdValidOrThrowError(bookId);
 
     await BookModel.updateOne(
-      { _id: createMongoObjectIdFromString(bookId as string) },
+      { _id: createMongoObjectIdFromString(bookId.toString()) },
       { ...updateData },
     ).session(await this.getTransactionSession());
   }
@@ -47,9 +47,9 @@ class BookService implements IBookService {
   async deleteOneById(bookId: BookData['_id'] | string): Promise<void> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    await BookModel.deleteOne({ _id: bookId }).session(
-      await this.getTransactionSession(),
-    );
+    await BookModel.deleteOne({
+      _id: createMongoObjectIdFromString(bookId.toString()),
+    }).session(await this.getTransactionSession());
   }
 
   async getTransactionSession() {
@@ -89,15 +89,6 @@ class BookService implements IBookService {
                         $expr: { $eq: ['$_id', '$$genreIdFromGBL'] },
                       },
                     },
-                    // {
-                    //   $project: {
-                    //     _id: 0,
-                    //     id: '$_id',
-                    //     name: 1,
-                    //     alias: 1,
-                    //     descpription: 1,
-                    //   },
-                    // },
                     {
                       $sort: {
                         name: 1,
@@ -117,25 +108,11 @@ class BookService implements IBookService {
             as: 'genres',
           },
         },
-        // {
-        //   $project: {
-        //     _id: 1,
-        //     __v: 0,
-        //   },
-        // },
         {
           $sort: {
             title: 1,
           },
         },
-        // {
-        //   $addFields: {
-        //     id: '$_id',
-        //   },
-        // },
-        // {
-        //   $unset: ['_id'],
-        // },
       ],
       { session: await this.getTransactionSession() },
     );
@@ -176,15 +153,6 @@ class BookService implements IBookService {
                         $expr: { $eq: ['$_id', '$$genreIdFromGBL'] },
                       },
                     },
-                    // {
-                    //   $project: {
-                    //     _id: 1,
-                    //     id: '$_id',
-                    //     name: 1,
-                    //     alias: 1,
-                    //     description: 1,
-                    //   },
-                    // },
                     {
                       $sort: {
                         name: 1,
@@ -204,25 +172,11 @@ class BookService implements IBookService {
             as: 'genres',
           },
         },
-        // {
-        //   $project: {
-        //     _id: 1,
-        //     __v: 0,
-        //   },
-        // },
         {
           $sort: {
             title: 1,
           },
         },
-        // {
-        //   $addFields: {
-        //     id: '$_id',
-        //   },
-        // },
-        // {
-        //   $unset: ['_id'],
-        // },
       ],
       { session: await this.getTransactionSession() },
     );

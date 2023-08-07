@@ -43,16 +43,17 @@ class GenreService implements IGenreService {
     updateData: GenreData,
   ): Promise<void> {
     this.checkGenreIdValidOrThrowError(genreId);
-    await GenreModel.updateOne({ _id: genreId }, { ...updateData }).session(
-      await this.getTransactionSession(),
-    );
+    await GenreModel.updateOne(
+      { _id: createMongoObjectIdFromString(genreId.toString()) },
+      { ...updateData },
+    ).session(await this.getTransactionSession());
   }
 
   async deleteOneById(genreId: GenreData['_id'] | string): Promise<void> {
     this.checkGenreIdValidOrThrowError(genreId);
-    await GenreModel.deleteOne({ _id: genreId }).session(
-      await this.getTransactionSession(),
-    );
+    await GenreModel.deleteOne({
+      _id: createMongoObjectIdFromString(genreId.toString()),
+    }).session(await this.getTransactionSession());
   }
 
   async getAggregatedGenreWithBooksByGenreId(
@@ -88,16 +89,6 @@ class GenreService implements IGenreService {
                         $expr: { $eq: ['$_id', '$$foundBookIdFromGBL'] },
                       },
                     },
-                    // {
-                    //   $project: {
-                    //     _id: 0,
-                    //     id: '$_id',
-                    //     title: 1,
-                    //     description: 1,
-                    //     publisher: 1,
-                    //     publish_date: 1,
-                    //   },
-                    // },
                   ],
                   as: 'bookNodeFromBook',
                 },
@@ -112,20 +103,6 @@ class GenreService implements IGenreService {
             as: 'books',
           },
         },
-        // {
-        //   $project: {
-        //     _id: 1,
-        //     __v: 0,
-        //   },
-        // },
-        // {
-        //   $addFields: {
-        //     id: '$_id',
-        //   },
-        // },
-        // {
-        //   $unset: ['_id'],
-        // },
       ],
       { session: await this.getTransactionSession() },
     );
@@ -164,16 +141,6 @@ class GenreService implements IGenreService {
                         $expr: { $eq: ['$_id', '$$foundBookIdFromGBL'] },
                       },
                     },
-                    // {
-                    //   $project: {
-                    //     _id: 0,
-                    //     id: '$_id',
-                    //     title: 1,
-                    //     description: 1,
-                    //     publisher: 1,
-                    //     publish_date: 1,
-                    //   },
-                    // },
                     {
                       $sort: {
                         name: 1,
@@ -193,20 +160,6 @@ class GenreService implements IGenreService {
             as: 'books',
           },
         },
-        // {
-        //   $project: {
-        //     _id: 1,
-        //     __v: 0,
-        //   },
-        // },
-        // {
-        //   $addFields: {
-        //     id: '$_id',
-        //   },
-        // },
-        // {
-        //   $unset: ['_id'],
-        // },
       ],
       { session: await this.getTransactionSession() },
     );
