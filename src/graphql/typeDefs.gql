@@ -34,9 +34,6 @@ type Mutation {
   createGenre(name: String!, description: String, alias: String): Genre!
 
   "Create Genre - Book relation"
-  addGenreToBook(genreId: ID!, bookId: ID!): Book!
-
-  "Create Genre - Book relation"
   addBookToGenre(genreId: ID!, bookId: ID!): Genre!
 
   "Remove Genre - Book relation"

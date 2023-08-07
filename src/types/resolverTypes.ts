@@ -77,8 +77,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Create Genre - Book relation */
   addBookToGenre: Genre;
-  /** Create Genre - Book relation */
-  addGenreToBook: Book;
   /** Create a new Book record */
   createBook: Book;
   /** Create a new Genre record */
@@ -93,11 +91,6 @@ export type Mutation = {
 };
 
 export type MutationAddBookToGenreArgs = {
-  bookId: Scalars['ID']['input'];
-  genreId: Scalars['ID']['input'];
-};
-
-export type MutationAddGenreToBookArgs = {
   bookId: Scalars['ID']['input'];
   genreId: Scalars['ID']['input'];
 };
@@ -377,12 +370,6 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationAddBookToGenreArgs, 'bookId' | 'genreId'>
-  >;
-  addGenreToBook?: Resolver<
-    ResolversTypes['Book'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationAddGenreToBookArgs, 'bookId' | 'genreId'>
   >;
   createBook?: Resolver<
     ResolversTypes['Book'],
