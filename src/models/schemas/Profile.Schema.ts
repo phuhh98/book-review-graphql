@@ -20,7 +20,7 @@ const ProfileSchema = new Schema<ProfileData>(
       validate: {
         validator: (value: string) => (value ? isDate(value) : true),
       },
-      transform: (_: unknown, value: Date) => moment(value).toISOString(),
+      transform: (_: unknown, value: Date) => moment(value).format('DD/MM/YYYY'),
     },
     profile_picture: Types.ObjectId,
   },
