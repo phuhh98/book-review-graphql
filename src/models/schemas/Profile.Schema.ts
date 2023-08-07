@@ -13,7 +13,6 @@ const ProfileSchema = new Schema<ProfileData>(
     last_name: {
       type: String,
       required: [true, 'Last name is required'],
-      unique: true,
     },
     date_of_birth: {
       type: Date,
