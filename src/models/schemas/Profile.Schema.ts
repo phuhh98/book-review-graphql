@@ -1,8 +1,8 @@
 import { Schema, Types } from 'mongoose';
-import { ProfileData } from 'src/types';
+import { ImageGridFsBucket } from '..';
+import { ProfileData } from '../../types/models';
 import { createMongoObjectIdFromString } from 'src/utils';
 import moment, { isDate } from 'moment';
-import { ImageGridFsBucket } from '..';
 
 const ProfileSchema = new Schema<ProfileData>(
   {
@@ -13,13 +13,14 @@ const ProfileSchema = new Schema<ProfileData>(
     last_name: {
       type: String,
       required: [true, 'Last name is required'],
+      unique: true,
     },
     date_of_birth: {
       type: Date,
       validate: {
         validator: (value: string) => (value ? isDate(value) : true),
       },
-      transform: (_: unknown, value: Date) => moment(value).format('DD/MM/YYYY'),
+      transform: (_: unknown, value: Date) => moment(value).toISOString(),
     },
     profile_picture: Types.ObjectId,
   },

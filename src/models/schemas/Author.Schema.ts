@@ -1,7 +1,8 @@
 import { Schema, Types } from 'mongoose';
-import { AuthorData } from 'src/types';
-import { MODEL_ALIAS } from 'src/constants';
 import { AuthorBookRelModel, ProfileModel } from '..';
+import { AuthorData } from '../../types/models';
+import { MODEL_ALIAS } from 'src/constants';
+import { createMongoObjectIdFromString } from 'src/utils';
 
 const AuthorSchema = new Schema<AuthorData>(
   {
