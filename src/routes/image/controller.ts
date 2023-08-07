@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { createMongoObjectIdFromString, createNextErrorMessage } from '../../utils';
 import { ImageGridFsBucket } from 'src/models';
-import mongoose, { isValidObjectId, mongo } from 'mongoose';
+import { isValidObjectId } from 'mongoose';
 
 interface IImageController {
   getImage: RequestHandler<{ id: String }, {}>;
@@ -15,11 +15,10 @@ export const ImageController: IImageController = {
       return next(createNextErrorMessage(StatusCodes.BAD_REQUEST, 'Invalid image id'));
     }
 
-    const imageMetaData = await mongoose.connection.db
-      .collection('Image.files')
-      .findOne({ _id: createMongoObjectIdFromString(imageId.toString()) });
-
-    if (!imageMetaData) {
+    const imageCursor = ImageGridFsBucket.find({
+      _id: createMongoObjectIdFromString(imageId as string),
+    });
+    if ((await imageCursor.toArray()).length === 0) {
       return next(createNextErrorMessage(StatusCodes.NOT_FOUND, 'Asset not found'));
     }
 

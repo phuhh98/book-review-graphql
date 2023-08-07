@@ -8,7 +8,7 @@ import { StatusCodes } from 'http-status-codes';
 export const applyMiddlewares = (app: Application) => {
   app.use(cors(CORS_OPTIONS));
   app.use(express.json());
-  app.use(morgan('tiny'));
+  app.use(morgan('dev'));
 };
 
 export const errorMiddleware: ErrorRequestHandler = (err: NextFuncError, _, res) => {

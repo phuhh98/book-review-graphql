@@ -21,3 +21,5 @@ export const MODEL_ALIAS = {
   GenreBookRel: 'GenreBookRel',
   Image: 'Image',
 };
+
+export const ALLOW_IMAGE_EXT = ['.jpeg', '.png'];
