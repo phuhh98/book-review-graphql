@@ -1,10 +1,11 @@
-import BookService from 'src/services/Book.Service';
+import { BookService } from 'src/services/';
 import { GenreResolvers } from 'src/types';
 
 // Genre type field resolvers
-export const genreResolver: GenreResolvers = {
+export const genreTypeResolver: GenreResolvers = {
   id: (parent) => parent._id.toString(),
   name: (parent) => parent.name,
+  alias: (parent) => parent.alias,
   description: (parent) => parent.description,
   books: async (parent) => {
     if (!parent.books) {

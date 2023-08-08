@@ -1,12 +1,16 @@
-import { IGenreService } from './types';
-import { BookModel, GenreBookRelModel, GenreModel } from '../models';
-import { isValidObjectId } from 'mongoose';
-import { GenreData } from '../types/models';
+import { IGenreService, GenreData, BookData, GenreBookRelData } from 'src/types';
+import { Model, isValidObjectId } from 'mongoose';
 import { createMongoObjectIdFromString } from 'src/utils';
 
-class GenreService implements IGenreService {
+export default class GenreService implements IGenreService {
+  constructor(
+    private genreModel: Model<GenreData>,
+    private bookModel: Model<BookData>,
+    private GBLModel: Model<GenreBookRelData>,
+  ) {}
+
   async addOne(genreData: GenreData): Promise<GenreData | null> {
-    const newGenre = new GenreModel(genreData);
+    const newGenre = new this.genreModel(genreData);
 
     await newGenre.save({ session: await this.getTransactionSession() });
 
@@ -43,17 +47,21 @@ class GenreService implements IGenreService {
     updateData: GenreData,
   ): Promise<void> {
     this.checkGenreIdValidOrThrowError(genreId);
-    await GenreModel.updateOne(
-      { _id: createMongoObjectIdFromString(genreId.toString()) },
-      { ...updateData },
-    ).session(await this.getTransactionSession());
+    await this.genreModel
+      .updateOne(
+        { _id: createMongoObjectIdFromString(genreId.toString()) },
+        { ...updateData },
+      )
+      .session(await this.getTransactionSession());
   }
 
   async deleteOneById(genreId: GenreData['_id'] | string): Promise<void> {
     this.checkGenreIdValidOrThrowError(genreId);
-    await GenreModel.deleteOne({
-      _id: createMongoObjectIdFromString(genreId.toString()),
-    }).session(await this.getTransactionSession());
+    await this.genreModel
+      .deleteOne({
+        _id: createMongoObjectIdFromString(genreId.toString()),
+      })
+      .session(await this.getTransactionSession());
   }
 
   async getAggregatedGenreWithBooksByGenreId(
@@ -62,7 +70,7 @@ class GenreService implements IGenreService {
     // aggreate match and populate with genres, sort by title asc
     this.checkGenreIdValidOrThrowError(genreId);
 
-    return await GenreModel.aggregate<GenreData>(
+    return await this.genreModel.aggregate<GenreData>(
       [
         {
           $match: {
@@ -71,7 +79,7 @@ class GenreService implements IGenreService {
         },
         {
           $lookup: {
-            from: GenreBookRelModel.collection.name,
+            from: this.GBLModel.collection.name,
             let: { idFromFoundGenre: '$_id' },
             pipeline: [
               {
@@ -81,7 +89,7 @@ class GenreService implements IGenreService {
               },
               {
                 $lookup: {
-                  from: BookModel.collection.name,
+                  from: this.bookModel.collection.name,
                   let: { foundBookIdFromGBL: '$bookId' },
                   pipeline: [
                     {
@@ -111,7 +119,7 @@ class GenreService implements IGenreService {
   async getAggregatedGenreWithBooksByGenreName(
     genreName: GenreData['name'],
   ): Promise<GenreData[]> {
-    return await GenreModel.aggregate<GenreData>(
+    return await this.genreModel.aggregate<GenreData>(
       [
         {
           $match: {
@@ -123,7 +131,7 @@ class GenreService implements IGenreService {
         },
         {
           $lookup: {
-            from: GenreBookRelModel.collection.name,
+            from: this.GBLModel.collection.name,
             let: { idFromFoundGenre: '$_id' },
             pipeline: [
               {
@@ -133,7 +141,7 @@ class GenreService implements IGenreService {
               },
               {
                 $lookup: {
-                  from: BookModel.collection.name,
+                  from: this.bookModel.collection.name,
                   let: { foundBookIdFromGBL: '$bookId' },
                   pipeline: [
                     {
@@ -166,7 +174,7 @@ class GenreService implements IGenreService {
   }
 
   async getTransactionSession() {
-    return await GenreModel.startSession();
+    return await this.genreModel.startSession();
   }
   checkGenreIdValidOrThrowError(genreId: GenreData['_id'] | string) {
     const genreIdNotValid = !isValidObjectId(genreId);
@@ -175,5 +183,3 @@ class GenreService implements IGenreService {
     }
   }
 }
-
-export default new GenreService();

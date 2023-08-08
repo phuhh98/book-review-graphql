@@ -1,9 +1,9 @@
 import { Schema, Types } from 'mongoose';
 import moment from 'moment';
-import { isDate } from 'util/types';
-import { AuthorBookRelModel, GenreBookRelModel, ImageGridFsBucket } from '..';
-import { BookData } from '../../types/models';
+import { BookData } from 'src/types';
 import { createMongoObjectIdFromString } from 'src/utils';
+import { isDate } from 'moment';
+import { AuthorBookRelModel, GenreBookRelModel, ImageGridFsBucket } from '..';
 
 const BookSchema = new Schema<BookData>(
   {

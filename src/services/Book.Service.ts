@@ -1,12 +1,16 @@
-import { IBookService } from './types';
-import { BookModel, GenreBookRelModel, GenreModel } from '../models';
-import { isValidObjectId } from 'mongoose';
-import { BookData } from '../types/models';
+import { IBookService, BookData, GenreData, GenreBookRelData } from 'src/types';
+import { Model, isValidObjectId } from 'mongoose';
 import { createMongoObjectIdFromString } from 'src/utils';
 
-class BookService implements IBookService {
+export default class BookService implements IBookService {
+  constructor(
+    private bookModel: Model<BookData>,
+    private genreModel: Model<GenreData>,
+    private GBLModel: Model<GenreBookRelData>,
+  ) {}
+
   async addOne(bookData: BookData): Promise<BookData | null> {
-    const newBook = new BookModel(bookData);
+    const newBook = new this.bookModel(bookData);
 
     await newBook.save({ session: await this.getTransactionSession() });
 
@@ -38,22 +42,26 @@ class BookService implements IBookService {
   ): Promise<void> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    await BookModel.updateOne(
-      { _id: createMongoObjectIdFromString(bookId.toString()) },
-      { ...updateData },
-    ).session(await this.getTransactionSession());
+    await this.bookModel
+      .updateOne(
+        { _id: createMongoObjectIdFromString(bookId.toString()) },
+        { ...updateData },
+      )
+      .session(await this.getTransactionSession());
   }
 
   async deleteOneById(bookId: BookData['_id'] | string): Promise<void> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    await BookModel.deleteOne({
-      _id: createMongoObjectIdFromString(bookId.toString()),
-    }).session(await this.getTransactionSession());
+    await this.bookModel
+      .deleteOne({
+        _id: createMongoObjectIdFromString(bookId.toString()),
+      })
+      .session(await this.getTransactionSession());
   }
 
   async getTransactionSession() {
-    return await BookModel.startSession();
+    return await this.bookModel.startSession();
   }
 
   async getAggregatedBookWithGenresById(
@@ -62,7 +70,7 @@ class BookService implements IBookService {
     // aggreate match and populate with genres, sort by title asc
     this.checkBookIdValidOrThrowError(bookId);
 
-    return await BookModel.aggregate<BookData>(
+    return await this.bookModel.aggregate<BookData>(
       [
         {
           $match: {
@@ -71,7 +79,7 @@ class BookService implements IBookService {
         },
         {
           $lookup: {
-            from: GenreBookRelModel.collection.name,
+            from: this.GBLModel.collection.name,
             let: { idFromFoundBook: '$_id' },
             pipeline: [
               {
@@ -81,7 +89,7 @@ class BookService implements IBookService {
               },
               {
                 $lookup: {
-                  from: GenreModel.collection.name,
+                  from: this.genreModel.collection.name,
                   let: { genreIdFromGBL: '$genreId' },
                   pipeline: [
                     {
@@ -123,7 +131,7 @@ class BookService implements IBookService {
   ): Promise<BookData[]> {
     // aggreate match and populate with genres, sort by title asc
 
-    return await BookModel.aggregate<BookData>(
+    return await this.bookModel.aggregate<BookData>(
       [
         {
           $match: {
@@ -135,7 +143,7 @@ class BookService implements IBookService {
         },
         {
           $lookup: {
-            from: GenreBookRelModel.collection.name,
+            from: this.GBLModel.collection.name,
             let: { idFromFoundBook: '$_id' },
             pipeline: [
               {
@@ -145,7 +153,7 @@ class BookService implements IBookService {
               },
               {
                 $lookup: {
-                  from: GenreModel.collection.name,
+                  from: this.genreModel.collection.name,
                   let: { genreIdFromGBL: '$genreId' },
                   pipeline: [
                     {
@@ -189,5 +197,3 @@ class BookService implements IBookService {
     }
   }
 }
-
-export default new BookService();

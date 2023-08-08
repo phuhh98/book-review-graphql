@@ -52,27 +52,27 @@ type UploadResult {
   book: Book
 }
 
-"User data representation"
-type User {
-  id: ID!
-  full_name: String
-  email: String!
-  date_of_birth: Date
-  avatar: URI
-  read_books: [Book]!
-  created_at: Date!
-  updated_at: Date!
-}
+# "User data representation"
+# type User {
+#   id: ID!
+#   full_name: String
+#   email: String!
+#   date_of_birth: Date
+#   avatar: URI
+#   read_books: [Book]!
+#   created_at: Date!
+#   updated_at: Date!
+# }
 
-"Author data representation"
-type Author {
-  id: ID!
-  bio: String
-  user: User
-  books: [Book]!
-  created_at: Date!
-  updated_at: Date!
-}
+# "Author data representation"
+# type Author {
+#   id: ID!
+#   bio: String
+#   user: User
+#   books: [Book]!
+#   created_at: Date!
+#   updated_at: Date!
+# }
 
 "Book data representation"
 type Book {

@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { BookData, GenreData } from './models';
+import { BookData, GenreData } from './data';
 import { GraphqlContext } from './context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -33,17 +33,6 @@ export type Scalars = {
   URI: { input: any; output: any };
   /** Upload represents file data in multipart/form-data */
   Upload: { input: any; output: any };
-};
-
-/** Author data representation */
-export type Author = {
-  __typename?: 'Author';
-  bio?: Maybe<Scalars['String']['output']>;
-  books: Array<Maybe<Book>>;
-  created_at: Scalars['Date']['output'];
-  id: Scalars['ID']['output'];
-  updated_at: Scalars['Date']['output'];
-  user?: Maybe<User>;
 };
 
 /** Book data representation */
@@ -153,19 +142,6 @@ export type UploadResult = {
   success: Scalars['Boolean']['output'];
 };
 
-/** User data representation */
-export type User = {
-  __typename?: 'User';
-  avatar?: Maybe<Scalars['URI']['output']>;
-  created_at: Scalars['Date']['output'];
-  date_of_birth?: Maybe<Scalars['Date']['output']>;
-  email: Scalars['String']['output'];
-  full_name?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  read_books: Array<Maybe<Book>>;
-  updated_at: Scalars['Date']['output'];
-};
-
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
@@ -258,12 +234,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  Author: ResolverTypeWrapper<
-    Omit<Author, 'books' | 'user'> & {
-      books: Array<Maybe<ResolversTypes['Book']>>;
-      user?: Maybe<ResolversTypes['User']>;
-    }
-  >;
   Book: ResolverTypeWrapper<BookData>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Date: ResolverTypeWrapper<Scalars['Date']['output']>;
@@ -278,17 +248,10 @@ export type ResolversTypes = ResolversObject<{
   UploadResult: ResolverTypeWrapper<
     Omit<UploadResult, 'book'> & { book?: Maybe<ResolversTypes['Book']> }
   >;
-  User: ResolverTypeWrapper<
-    Omit<User, 'read_books'> & { read_books: Array<Maybe<ResolversTypes['Book']>> }
-  >;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  Author: Omit<Author, 'books' | 'user'> & {
-    books: Array<Maybe<ResolversParentTypes['Book']>>;
-    user?: Maybe<ResolversParentTypes['User']>;
-  };
   Book: BookData;
   Boolean: Scalars['Boolean']['output'];
   Date: Scalars['Date']['output'];
@@ -303,22 +266,6 @@ export type ResolversParentTypes = ResolversObject<{
   UploadResult: Omit<UploadResult, 'book'> & {
     book?: Maybe<ResolversParentTypes['Book']>;
   };
-  User: Omit<User, 'read_books'> & {
-    read_books: Array<Maybe<ResolversParentTypes['Book']>>;
-  };
-}>;
-
-export type AuthorResolvers<
-  ContextType = GraphqlContext,
-  ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author'],
-> = ResolversObject<{
-  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  books?: Resolver<Array<Maybe<ResolversTypes['Book']>>, ParentType, ContextType>;
-  created_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  updated_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type BookResolvers<
@@ -448,23 +395,7 @@ export type UploadResultResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type UserResolvers<
-  ContextType = GraphqlContext,
-  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User'],
-> = ResolversObject<{
-  avatar?: Resolver<Maybe<ResolversTypes['URI']>, ParentType, ContextType>;
-  created_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  date_of_birth?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  full_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  read_books?: Resolver<Array<Maybe<ResolversTypes['Book']>>, ParentType, ContextType>;
-  updated_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
-  Author?: AuthorResolvers<ContextType>;
   Book?: BookResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Genre?: GenreResolvers<ContextType>;
@@ -473,5 +404,4 @@ export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
   URI?: GraphQLScalarType;
   Upload?: GraphQLScalarType;
   UploadResult?: UploadResultResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
 }>;
