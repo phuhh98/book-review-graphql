@@ -42,18 +42,22 @@ export default class BookService implements IBookService {
   ): Promise<void> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    await BookModel.updateOne(
-      { _id: createMongoObjectIdFromString(bookId.toString()) },
-      { ...updateData },
-    ).session(await this.getTransactionSession());
+    await this.bookModel
+      .updateOne(
+        { _id: createMongoObjectIdFromString(bookId.toString()) },
+        { ...updateData },
+      )
+      .session(await this.getTransactionSession());
   }
 
   async deleteOneById(bookId: BookData['_id'] | string): Promise<void> {
     this.checkBookIdValidOrThrowError(bookId);
 
-    await BookModel.deleteOne({
-      _id: createMongoObjectIdFromString(bookId.toString()),
-    }).session(await this.getTransactionSession());
+    await this.bookModel
+      .deleteOne({
+        _id: createMongoObjectIdFromString(bookId.toString()),
+      })
+      .session(await this.getTransactionSession());
   }
 
   async getTransactionSession() {

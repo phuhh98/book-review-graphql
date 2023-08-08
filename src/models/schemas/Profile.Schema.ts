@@ -1,8 +1,8 @@
 import { Schema, Types } from 'mongoose';
-import { ImageGridFsBucket } from '..';
-import { ProfileData } from '../../types/models';
+import { ProfileData } from 'src/types';
 import { createMongoObjectIdFromString } from 'src/utils';
 import moment, { isDate } from 'moment';
+import { ImageGridFsBucket } from '..';
 
 const ProfileSchema = new Schema<ProfileData>(
   {
