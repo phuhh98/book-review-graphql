@@ -1,7 +1,6 @@
 import {
   AuthorData,
   ProfileData,
-  UserDataAfterPopulated,
   IAuthorService,
   AuthorDataAfterPopulated,
   UserData,
@@ -18,7 +17,7 @@ export default class AuthorService implements IAuthorService {
 
   async addOne(authorData: AuthorDataAfterPopulated): Promise<AuthorData | null> {
     const authorProfile = new this.profileModel(authorData.profile);
-    authorProfile.save({ session: await this.getProfileTransactionSession() });
+    await authorProfile.save({ session: await this.getProfileTransactionSession() });
 
     const newUser = new this.authorModel({
       bio: authorData.bio,
@@ -50,10 +49,10 @@ export default class AuthorService implements IAuthorService {
     // If no profile attach => create a profile and attach to the user
     if (!authorRecord.profile) {
       const userProfile = new this.profileModel(updateData.profile);
-      userProfile.save({ session: await this.getProfileTransactionSession() });
+      await userProfile.save({ session: await this.getProfileTransactionSession() });
 
       authorRecord.profile = userProfile._id;
-      authorRecord.save({ session: await this.getUserModelTransactionSession() });
+      await authorRecord.save({ session: await this.getUserModelTransactionSession() });
       return;
     }
 
