@@ -2,9 +2,6 @@ import { Schema } from 'mongoose';
 import { GenreData } from '../../types';
 import { createMongoObjectIdFromString } from '../../utils';
 import { GenreBookRelModel } from '..';
-import { GenreData } from '../../types/models';
-import { createMongoObjectIdFromString } from 'src/utils';
-import { GenreBookRelModel } from '..';
 
 const GenreSchema = new Schema<GenreData>(
   {
@@ -30,11 +27,9 @@ const GenreSchema = new Schema<GenreData>(
 
 // clear relation on delete
 GenreSchema.pre<GenreData>('deleteOne', async function (next) {
-  const genreCurrent = this;
-
   // clear genre in books when genre is deleted
-  GenreBookRelModel.deleteMany({
-    genreId: createMongoObjectIdFromString(genreCurrent._id.toString()),
+  await GenreBookRelModel.deleteMany({
+    genreId: createMongoObjectIdFromString(this._id.toString()),
   }).session(await GenreBookRelModel.startSession());
 
   next();
