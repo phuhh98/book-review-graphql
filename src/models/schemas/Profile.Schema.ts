@@ -1,6 +1,6 @@
 import { Schema, Types } from 'mongoose';
-import { ProfileData } from 'src/types';
-import { createMongoObjectIdFromString } from 'src/utils';
+import { ProfileData } from '../../types';
+import { createMongoObjectIdFromString } from '../../utils';
 import moment, { isDate } from 'moment';
 import { ImageGridFsBucket } from '..';
 

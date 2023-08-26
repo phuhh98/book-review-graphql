@@ -1,5 +1,10 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { BookData, GenreData } from './data';
+import {
+  BookData,
+  GenreData,
+  AuthorDataAfterPopulated,
+  UserDataAfterPopulated,
+} from './data';
 import { GraphqlContext } from './context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;

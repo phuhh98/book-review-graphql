@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
-import { GenreData } from 'src/types';
-import { createMongoObjectIdFromString } from 'src/utils';
+import { GenreData } from '../../types';
+import { createMongoObjectIdFromString } from '../../utils';
 import { GenreBookRelModel } from '..';
 import { GenreData } from '../../types/models';
 import { createMongoObjectIdFromString } from 'src/utils';

@@ -22,5 +22,6 @@ services:
       MONGODB_USER: *mongo_user
       MONGODB_PASSWORD: *mongo_password
       CLUSTER_MODE: 'off'
+      ALLOWED_ORIGINS: '["http://localhost:4200"]'
     ports:
       - '8080:8080'

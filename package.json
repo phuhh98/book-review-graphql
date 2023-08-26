@@ -6,11 +6,11 @@
   "scripts": {
     "test": "jest --passWithNoTests",
     "dev": "nodemon -e ts -x \"npm run generate && ts-node src/index.ts\"",
-    "start": "npm run build && node dist/index.js",
+    "start": "npm run build; node dist/index.js",
     "lint": "eslint src/**/*.ts --fix",
     "prepare": "husky install",
     "generate": "graphql-codegen --config codegen.yml",
-    "copy": "copyfiles --flat src/graphql/*.gql dist/src/graphql/",
+    "copy": "copyfiles --flat src/graphql/*.gql dist/graphql/",
     "build": "tsc && npm run copy"
   },
   "keywords": [

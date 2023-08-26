@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { createNextErrorMessage } from 'src/utils';
-import { IBookService, IGenreBookRelService, BookData } from 'src/types';
+import { createNextErrorMessage } from '../../utils';
+import { IBookService, IGenreBookRelService, BookData } from '../../types';
 import { ParsedQs } from 'qs';
 
 abstract class IBookController {

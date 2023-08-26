@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
-import { GenreBookRelService, GenreService } from 'src/services';
-import { GenreData, MutationResolvers } from 'src/types';
+import { GenreBookRelService, GenreService } from '../../../services';
+import { GenreData, MutationResolvers } from '../../../types';
 
 export const genreMutationResolvers: Pick<
   MutationResolvers,

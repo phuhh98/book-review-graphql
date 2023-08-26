@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { BookController } from './controller';
-import { BookService, GenreBookRelService } from 'src/services';
+import { BookService, GenreBookRelService } from '../../services';
 
 const bookRouter = Router();
 const bookController = new BookController(BookService, GenreBookRelService);

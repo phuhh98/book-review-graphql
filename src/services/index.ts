@@ -1,4 +1,4 @@
-import { BookModel, GenreBookRelModel, GenreModel } from 'src/models';
+import { BookModel, GenreBookRelModel, GenreModel } from '../models';
 import CBookService from './Book.Service';
 import CGenreService from './Genre.Service';
 import CGenreBookRelService from './GenreBookRel.Service';

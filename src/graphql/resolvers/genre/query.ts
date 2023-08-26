@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
-import { GenreService } from 'src/services';
-import { QueryResolvers } from 'src/types';
+import { GenreService } from '../../../services';
+import { QueryResolvers } from '../../../types';
 
 export const genreQueryResolvers: Pick<QueryResolvers, 'genresByName' | 'genreById'> = {
   genresByName: async (_, args) => {

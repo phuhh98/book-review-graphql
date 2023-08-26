@@ -1,5 +1,5 @@
-import { BookService } from 'src/services/';
-import { GenreResolvers } from 'src/types';
+import { BookService } from '../../../services/';
+import { GenreResolvers } from '../../../types';
 
 // Genre type field resolvers
 export const genreTypeResolver: GenreResolvers = {

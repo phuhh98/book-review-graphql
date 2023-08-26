@@ -6,7 +6,7 @@ import { healthcheckRouter } from './healthcheck';
 import { getApolloMiddleware } from './graphql';
 import { errorMiddleware } from '../middlewares';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
-import { MEGA_BYTE, REST_PATH } from 'src/constants';
+import { MEGA_BYTE, REST_PATH } from '../constants';
 import { imageRouter } from './image';
 
 export async function applyRoutes(app: Application) {

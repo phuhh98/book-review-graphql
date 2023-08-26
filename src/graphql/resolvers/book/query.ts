@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
-import { BookService } from 'src/services';
-import { QueryResolvers } from 'src/types';
+import { BookService } from '../../../services';
+import { QueryResolvers } from '../../../types';
 
 export const bookQueryResolvers: Pick<
   QueryResolvers,

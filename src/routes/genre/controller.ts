@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { BookData, GenreData, IGenreService } from 'src/types';
-import { createNextErrorMessage } from 'src/utils';
+import { BookData, GenreData, IGenreService } from '../../types';
+import { createNextErrorMessage } from '../../utils';
 import { ParsedQs } from 'qs';
 
 abstract class IGenreController {
