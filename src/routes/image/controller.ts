@@ -18,13 +18,12 @@ export const ImageController: IImageController = {
     const imageCursor = ImageGridFsBucket.find({
       _id: createMongoObjectIdFromString(imageId.toString()),
     });
-    if ((await imageCursor.toArray()).length === 0) {
+    const imageMeta = await imageCursor.next();
+    if (!imageMeta) {
       return next(createNextErrorMessage(StatusCodes.NOT_FOUND, 'Asset not found'));
     }
 
-    const imageReadStream = ImageGridFsBucket.openDownloadStream(
-      createMongoObjectIdFromString(imageId.toString()),
-    );
+    const imageReadStream = ImageGridFsBucket.openDownloadStream(imageMeta._id);
 
     imageReadStream.pipe(res);
     res.status(StatusCodes.OK);
