@@ -1,6 +1,7 @@
 import { IBookService, BookData, GenreData, GenreBookRelData } from 'src/types';
 import { Model, isValidObjectId } from 'mongoose';
 import { createMongoObjectIdFromString } from 'src/utils';
+import escapeStringRegexp from 'escape-string-regexp';
 
 export default class BookService implements IBookService {
   constructor(
@@ -46,6 +47,7 @@ export default class BookService implements IBookService {
       .updateOne(
         { _id: createMongoObjectIdFromString(bookId.toString()) },
         { ...updateData },
+        { runValidators: true },
       )
       .session(await this.getTransactionSession());
   }
@@ -136,7 +138,7 @@ export default class BookService implements IBookService {
         {
           $match: {
             title: {
-              $regex: `${bookTitle}`,
+              $regex: new RegExp(escapeStringRegexp(bookTitle)),
               $options: 'i',
             },
           },
@@ -188,6 +190,22 @@ export default class BookService implements IBookService {
       ],
       { session: await this.getTransactionSession() },
     );
+  }
+
+  async getLastestBooks(maxItems?: number | string, offset?: number | string) {
+    const DEFAULT_MAX_ITEMS = 10;
+    const DEAFAULT_OFFSET = 0;
+    maxItems = maxItems
+      ? parseInt(maxItems.toString()) ?? DEFAULT_MAX_ITEMS
+      : DEFAULT_MAX_ITEMS;
+    offset = offset ? parseInt(offset.toString()) ?? DEAFAULT_OFFSET : DEAFAULT_OFFSET;
+
+    const books = await this.bookModel.find(
+      {},
+      {},
+      { sort: { publish_date: 'desc' }, limit: maxItems, skip: offset },
+    );
+    return books;
   }
 
   checkBookIdValidOrThrowError(bookId: BookData['_id'] | string) {
