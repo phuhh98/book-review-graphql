@@ -1,6 +1,6 @@
-import { GenreService } from 'src/services';
-import { BookResolvers } from 'src/types';
-import { computeImageURIFromId } from 'src/utils';
+import { GenreService } from '../../../services';
+import { BookResolvers } from '../../../types';
+import { computeImageURIFromId } from '../../../utils';
 
 export const bookTypeResolver: BookResolvers = {
   id: (parent) => parent._id.toString(),

@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { createMongoObjectIdFromString, createNextErrorMessage } from '../../utils';
-import { ImageGridFsBucket } from 'src/models';
+import { ImageGridFsBucket } from '../../models';
 import { isValidObjectId } from 'mongoose';
 
 interface IImageController {

@@ -1,7 +1,7 @@
 import { Schema, Types } from 'mongoose';
 import moment from 'moment';
-import { BookData } from 'src/types';
-import { createMongoObjectIdFromString } from 'src/utils';
+import { BookData } from '../../types';
+import { createMongoObjectIdFromString } from '../../utils';
 import { isDate } from 'moment';
 import { AuthorBookRelModel, GenreBookRelModel, ImageGridFsBucket } from '..';
 

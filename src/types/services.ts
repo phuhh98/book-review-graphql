@@ -1,4 +1,12 @@
-import { BookData, GenreBookRelData, GenreData } from './data';
+import {
+  AuthorData,
+  AuthorDataAfterPopulated,
+  BookData,
+  GenreBookRelData,
+  GenreData,
+  UserData,
+  UserDataAfterPopulated,
+} from './data';
 
 export abstract class IBookService {
   abstract addOne(bookData: BookData): Promise<BookData | null>;
@@ -32,5 +40,23 @@ export abstract class IGenreBookRelService {
   abstract deleteGenreBookRel(
     bookId: BookData['_id'] | string,
     genreId: GenreData['_id'] | string,
+  ): Promise<void>;
+}
+
+export abstract class IUserService {
+  abstract addOne(userData: UserDataAfterPopulated): Promise<UserData | null>;
+  abstract getOneById(userId: UserData['_id'] | string): Promise<UserData | null>;
+  abstract updateProfileById(
+    userId: UserData['_id'] | string,
+    profileData: UserDataAfterPopulated['profile'],
+  ): Promise<void>;
+}
+
+export abstract class IAuthorService {
+  abstract addOne(authorData: AuthorDataAfterPopulated): Promise<AuthorData | null>;
+  abstract getOneById(authorId: AuthorData['_id'] | string): Promise<AuthorData | null>;
+  abstract updateOneById(
+    authorId: AuthorData['_id'] | string,
+    updateData: AuthorDataAfterPopulated,
   ): Promise<void>;
 }

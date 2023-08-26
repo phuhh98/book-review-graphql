@@ -1,5 +1,5 @@
 import mongoose, { Types, isValidObjectId } from 'mongoose';
-import { REST_PATH } from 'src/constants';
+import { REST_PATH } from '../constants';
 
 export const computeImageURIFromId = (imageId: Types.ObjectId): string => {
   if (!isValidObjectId(imageId.toString())) throw new Error('Invalid object id string');

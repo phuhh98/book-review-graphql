@@ -1,6 +1,6 @@
-import { IBookService, BookData, GenreData, GenreBookRelData } from 'src/types';
+import { IBookService, BookData, GenreData, GenreBookRelData } from '../types';
 import { Model, isValidObjectId } from 'mongoose';
-import { createMongoObjectIdFromString } from 'src/utils';
+import { createMongoObjectIdFromString } from '../utils';
 import escapeStringRegexp from 'escape-string-regexp';
 
 export default class BookService implements IBookService {

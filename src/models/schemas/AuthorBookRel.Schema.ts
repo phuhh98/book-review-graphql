@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
-import { MODEL_ALIAS } from 'src/constants';
-import { AuthorBookRelData } from 'src/types';
+import { MODEL_ALIAS } from '../../constants';
+import { AuthorBookRelData } from '../../types';
 
 const AuthorBookRelSchema = new Schema<AuthorBookRelData>({
   bookId: {

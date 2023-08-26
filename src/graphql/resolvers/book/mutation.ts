@@ -1,11 +1,11 @@
 import { GraphQLError } from 'graphql';
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
-import { ImageGridFsBucket } from 'src/models';
-import { BookService } from 'src/services';
-import { BookData, MutationResolvers } from 'src/types';
-import { createMongoObjectIdFromString } from 'src/utils';
+import { ImageGridFsBucket } from '../../../models';
+import { BookService } from '../../../services';
+import { BookData, MutationResolvers } from '../../../types';
+import { createMongoObjectIdFromString } from '../../../utils';
 import { FileUpload } from 'graphql-upload/Upload.js';
-import { ALLOW_IMAGE_EXT } from 'src/constants';
+import { ALLOW_IMAGE_EXT } from '../../../constants';
 import path from 'path';
 
 export const bookMutationResolvers: Pick<

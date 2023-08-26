@@ -1,4 +1,4 @@
-import { Resolvers } from 'src/types';
+import { Resolvers } from '../../types';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { bookMutationResolvers, bookQueryResolvers, bookTypeResolver } from './book';

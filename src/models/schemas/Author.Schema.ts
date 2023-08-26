@@ -1,6 +1,6 @@
 import { Schema, Types } from 'mongoose';
-import { AuthorData } from 'src/types';
-import { MODEL_ALIAS } from 'src/constants';
+import { AuthorData } from '../../types';
+import { MODEL_ALIAS } from '../../constants';
 import { AuthorBookRelModel, ProfileModel } from '..';
 
 const AuthorSchema = new Schema<AuthorData>(
