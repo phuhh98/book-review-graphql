@@ -34,9 +34,6 @@ type Mutation {
   createGenre(name: String!, description: String, alias: String): Genre!
 
   "Create Genre - Book relation"
-  addGenreToBook(genreId: ID!, bookId: ID!): Book!
-
-  "Create Genre - Book relation"
   addBookToGenre(genreId: ID!, bookId: ID!): Genre!
 
   "Remove Genre - Book relation"
@@ -55,27 +52,27 @@ type UploadResult {
   book: Book
 }
 
-"User data representation"
-type User {
-  id: ID!
-  full_name: String
-  email: String!
-  date_of_birth: Date
-  avatar: URI
-  read_books: [Book]!
-  created_at: Date!
-  updated_at: Date!
-}
+# "User data representation"
+# type User {
+#   id: ID!
+#   full_name: String
+#   email: String!
+#   date_of_birth: Date
+#   avatar: URI
+#   read_books: [Book]!
+#   created_at: Date!
+#   updated_at: Date!
+# }
 
-"Author data representation"
-type Author {
-  id: ID!
-  bio: String
-  user: User
-  books: [Book]!
-  created_at: Date!
-  updated_at: Date!
-}
+# "Author data representation"
+# type Author {
+#   id: ID!
+#   bio: String
+#   user: User
+#   books: [Book]!
+#   created_at: Date!
+#   updated_at: Date!
+# }
 
 "Book data representation"
 type Book {

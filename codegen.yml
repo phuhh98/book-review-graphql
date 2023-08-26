@@ -12,5 +12,5 @@ generates:
       # More on this below!
       contextType: './context#GraphqlContext'
       mappers:
-        Book: './models#BookData'
-        Genre: './models#GenreData'
+        Book: './data#BookData'
+        Genre: './data#GenreData'

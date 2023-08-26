@@ -1,20 +1,21 @@
-import { IGenreBookRelService } from './types';
-import { GenreBookRelModel } from '../models';
-import { isValidObjectId } from 'mongoose';
-import { BookData, GenreBookRelData, GenreData } from '../types/models';
-import BookService from './Book.Service';
-import GenreService from './Genre.Service';
+import { IGenreBookRelService, BookData, GenreBookRelData, GenreData } from 'src/types';
+import { Model, Types, isValidObjectId } from 'mongoose';
 import { createMongoObjectIdFromString } from 'src/utils';
 
-class GenreBookRelService implements IGenreBookRelService {
+export default class GenreBookRelService implements IGenreBookRelService {
+  constructor(
+    private GBLModel: Model<GenreBookRelData>,
+    private genreModel: Model<GenreData>,
+    private bookModel: Model<BookData>,
+  ) {}
   async addOne(
     bookId: BookData['_id'] | string,
     genreId: GenreData['_id'] | string,
   ): Promise<GenreBookRelData> {
     this.checkIdPairValidOrThrowError(bookId, genreId);
 
-    const book = await BookService.getOneById(bookId);
-    const genre = await GenreService.getOneById(genreId);
+    const book = await this.bookModel.findOne({ _id: new Types.ObjectId(bookId) });
+    const genre = await this.genreModel.findOne({ _id: new Types.ObjectId(bookId) });
 
     if (!book) {
       throw new Error('book not found');
@@ -23,7 +24,7 @@ class GenreBookRelService implements IGenreBookRelService {
       throw new Error('genre not found');
     }
 
-    const newGBL = new GenreBookRelModel({ bookId, genreId });
+    const newGBL = new this.GBLModel({ bookId, genreId });
     await newGBL.save({ session: await this.getTransactionSession() });
     return newGBL;
   }
@@ -34,7 +35,7 @@ class GenreBookRelService implements IGenreBookRelService {
   ): Promise<void> {
     this.checkIdPairValidOrThrowError(bookId, genreId);
 
-    await GenreBookRelModel.deleteOne({
+    await this.GBLModel.deleteOne({
       bookId: {
         $eq: createMongoObjectIdFromString(bookId as string),
       },
@@ -45,7 +46,7 @@ class GenreBookRelService implements IGenreBookRelService {
   }
 
   async getTransactionSession() {
-    return await GenreBookRelModel.startSession();
+    return await this.GBLModel.startSession();
   }
 
   checkIdPairValidOrThrowError(
@@ -62,5 +63,3 @@ class GenreBookRelService implements IGenreBookRelService {
       );
   }
 }
-
-export default new GenreBookRelService();

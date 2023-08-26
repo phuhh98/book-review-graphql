@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
-import { MODEL_ALIAS } from '../../constants';
-import { GenreBookRelData } from '../../types/models';
+import { MODEL_ALIAS } from 'src/constants';
+import { GenreBookRelData } from 'src/types';
 
 const GenreBookRelSchema = new Schema<GenreBookRelData>({
   bookId: {

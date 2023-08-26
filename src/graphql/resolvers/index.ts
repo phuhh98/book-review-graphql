@@ -1,35 +1,17 @@
 import { Resolvers } from 'src/types';
-import {
-  addGenreToBookResolver,
-  bookByIdResolver,
-  booksByTitleResolver,
-  bookTypeResolver,
-  createBookResolver,
-  uploadImageResolver,
-} from './book';
-import {
-  createGenreResolver,
-  genreByIdResolver,
-  genresByNameResolver,
-  genreTypeResolver,
-  removeBookFromGenreResolver,
-} from './genre';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+import { bookMutationResolvers, bookQueryResolvers, bookTypeResolver } from './book';
+import { genreMutationResolvers, genreQueryResolvers, genreTypeResolver } from './genre';
 
 export const resolvers: Resolvers = {
   Query: {
-    bookById: bookByIdResolver,
-    booksByTitle: booksByTitleResolver,
-    genreById: genreByIdResolver,
-    genresByName: genresByNameResolver,
+    ...bookQueryResolvers,
+    ...genreQueryResolvers,
   },
   Mutation: {
-    createBook: createBookResolver,
-    createGenre: createGenreResolver,
-    addGenreToBook: addGenreToBookResolver,
-    removeBookFromGenre: removeBookFromGenreResolver,
-    uploadBookCoverImage: uploadImageResolver,
+    ...bookMutationResolvers,
+    ...genreMutationResolvers,
   },
   Book: bookTypeResolver,
   Genre: genreTypeResolver,

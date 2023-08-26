@@ -1,9 +1,9 @@
-import { Schema } from 'mongoose';
+import { Schema, Types } from 'mongoose';
 import moment from 'moment';
-import { isDate } from 'util/types';
-import { GenreBookRelModel, ImageGridFsBucket } from '..';
-import { BookData } from '../../types/models';
+import { BookData } from 'src/types';
 import { createMongoObjectIdFromString } from 'src/utils';
+import { isDate } from 'moment';
+import { AuthorBookRelModel, GenreBookRelModel, ImageGridFsBucket } from '..';
 
 const BookSchema = new Schema<BookData>(
   {
@@ -14,7 +14,7 @@ const BookSchema = new Schema<BookData>(
     },
     description: String,
     rating: Number,
-    cover_image: String,
+    cover_image: Types.ObjectId,
     publish_date: {
       type: Date,
       validate: {
@@ -37,13 +37,20 @@ BookSchema.pre<BookData>('deleteOne', async function (next) {
 
   // clear book in genres when book is deleted
   GenreBookRelModel.deleteMany({
-    bookId: bookCurrent._id,
+    bookId: createMongoObjectIdFromString(bookCurrent._id.toString()),
+  }).session(await GenreBookRelModel.startSession());
+
+  AuthorBookRelModel.deleteMany({
+    bookId: createMongoObjectIdFromString(bookCurrent._id.toString()),
   }).session(await GenreBookRelModel.startSession());
 
   // clear Image in GridFs when delete
-  ImageGridFsBucket.delete(
-    createMongoObjectIdFromString(bookCurrent.cover_image.toString()),
-  );
+  if (bookCurrent.cover_image) {
+    ImageGridFsBucket.delete(
+      createMongoObjectIdFromString(bookCurrent.cover_image.toString()),
+    );
+  }
+
   next();
 });
 

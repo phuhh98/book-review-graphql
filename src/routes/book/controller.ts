@@ -1,41 +1,51 @@
 import { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import BookService from '../../services/Book.Service';
-import GenreBookRelService from '../../services/GenreBookRel.Service';
-import { BookData } from '../../types/models';
-import { createNextErrorMessage } from '../../utils';
+import { createNextErrorMessage } from 'src/utils';
+import { IBookService, IGenreBookRelService, BookData } from 'src/types';
+import { ParsedQs } from 'qs';
 
-interface IBookController {
-  addBook: RequestHandler<{}, BookData | {}>;
-  getBookByIdOrTitle: RequestHandler<
+abstract class IBookController {
+  abstract addBook: RequestHandler<{}, BookData | {}>;
+  abstract getBookByIdOrTitle: RequestHandler<
     {},
     BookData | {},
     { id?: string; title: string }
   >;
-  updateBook: RequestHandler<{ id: string }, BookData | {}>;
-  deleteBook: RequestHandler<{ id: string }>;
-  addGenreToBook: RequestHandler<{ id: string }, {}, { genreId: string }>;
-  removeGenreFromBook: RequestHandler<{ id: string }, {}, { genreId: string }>;
+  abstract updateBook: RequestHandler<{ id: string }, BookData | {}>;
+  abstract deleteBook: RequestHandler<{ id: string }>;
+  abstract addGenreToBook: RequestHandler<{ id: string }, {}, { genreId: string }>;
+  abstract removeGenreFromBook: RequestHandler<{ id: string }, {}, { genreId: string }>;
 }
 
-export const BookController: IBookController = {
-  addBook: async (req, res, next) => {
+export class BookController implements IBookController {
+  constructor(
+    private bookService: IBookService,
+    private GBLService: IGenreBookRelService,
+  ) {}
+  addBook: RequestHandler<{}, {} | BookData, any, ParsedQs, Record<string, any>> = async (
+    req,
+    res,
+    next,
+  ) => {
     let newBook: BookData | null = null;
     try {
-      newBook = await BookService.addOne(req.body);
+      newBook = await this.bookService.addOne(req.body);
       return res.status(StatusCodes.CREATED).json(newBook ?? {});
     } catch (err) {
       if (err instanceof Error) {
         return next(
-          createNextErrorMessage(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            err.message,
-          ),
+          createNextErrorMessage(StatusCodes.INTERNAL_SERVER_ERROR, err.message),
         );
       }
     }
-  },
-  getBookByIdOrTitle: async (req, res, next) => {
+  };
+  getBookByIdOrTitle: RequestHandler<
+    {},
+    {} | BookData,
+    { id?: string | undefined; title: string },
+    ParsedQs,
+    Record<string, any>
+  > = async (req, res, next) => {
     const { id, title } = req.query;
     let book: BookData | null = null;
 
@@ -50,17 +60,14 @@ export const BookController: IBookController = {
 
     try {
       if (id) {
-        book = await BookService.getOneById(id as string);
+        book = await this.bookService.getOneById(id as string);
       } else if (title) {
-        book = await BookService.getOneByTitle(title as string);
+        book = await this.bookService.getOneByTitle(title as string);
       }
     } catch (error) {
       if (error instanceof Error)
         return next(
-          createNextErrorMessage(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            error.message,
-          ),
+          createNextErrorMessage(StatusCodes.INTERNAL_SERVER_ERROR, error.message),
         );
     }
 
@@ -69,71 +76,79 @@ export const BookController: IBookController = {
     } else {
       return res.status(StatusCodes.OK).json(book ?? {});
     }
-  },
-
-  updateBook: async (req, res, next) => {
+  };
+  updateBook: RequestHandler<
+    { id: string },
+    {} | BookData,
+    any,
+    ParsedQs,
+    Record<string, any>
+  > = async (req, res, next) => {
     const { id } = req.params;
 
     try {
-      await BookService.updateOneById(id, req.body);
+      await this.bookService.updateOneById(id, req.body);
     } catch (err) {
       if (err instanceof Error) {
-        return next(
-          createNextErrorMessage(StatusCodes.BAD_REQUEST, err.message),
-        );
+        return next(createNextErrorMessage(StatusCodes.BAD_REQUEST, err.message));
       }
     }
 
     return res.status(StatusCodes.OK).send('Updated success').end();
-  },
+  };
 
-  deleteBook: async (req, res, next) => {
-    const { id } = req.params;
+  deleteBook: RequestHandler<{ id: string }, any, any, ParsedQs, Record<string, any>> =
+    async (req, res, next) => {
+      const { id } = req.params;
 
-    try {
-      await BookService.deleteOneById(id);
-    } catch (err) {
-      if (err instanceof Error) {
-        return next(
-          createNextErrorMessage(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            err.message,
-          ),
-        );
+      try {
+        await this.bookService.deleteOneById(id);
+      } catch (err) {
+        if (err instanceof Error) {
+          return next(
+            createNextErrorMessage(StatusCodes.INTERNAL_SERVER_ERROR, err.message),
+          );
+        }
       }
-    }
-    return res.status(StatusCodes.OK).send('Delete success').end();
-  },
-
-  addGenreToBook: async (req, res, next) => {
+      return res.status(StatusCodes.OK).send('Delete success').end();
+    };
+  addGenreToBook: RequestHandler<
+    { id: string },
+    {},
+    { genreId: string },
+    ParsedQs,
+    Record<string, any>
+  > = async (req, res, next) => {
     const { id: bookId } = req.params;
     const { genreId } = req.body;
 
     try {
-      await GenreBookRelService.addOne(bookId, genreId);
+      await this.GBLService.addOne(bookId, genreId);
     } catch (error) {
       if (error instanceof Error)
-        return next(
-          createNextErrorMessage(StatusCodes.BAD_REQUEST, error.message),
-        );
+        return next(createNextErrorMessage(StatusCodes.BAD_REQUEST, error.message));
     }
 
     return res.status(StatusCodes.OK).send('Update success').end();
-  },
+  };
 
-  removeGenreFromBook: async (req, res, next) => {
+  removeGenreFromBook: RequestHandler<
+    { id: string },
+    {},
+    { genreId: string },
+    ParsedQs,
+    Record<string, any>
+  > = async (req, res, next) => {
     const { id: bookId } = req.params;
     const { genreId } = req.body;
 
     try {
-      await GenreBookRelService.deleteGenreBookRel(bookId, genreId);
+      await this.GBLService.deleteGenreBookRel(bookId, genreId);
     } catch (error) {
       if (error instanceof Error)
-        return next(
-          createNextErrorMessage(StatusCodes.BAD_REQUEST, error.message),
-        );
+        return next(createNextErrorMessage(StatusCodes.BAD_REQUEST, error.message));
     }
 
     return res.status(StatusCodes.OK).send('Update success').end();
-  },
-};
+  };
+}

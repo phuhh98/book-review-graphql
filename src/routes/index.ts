@@ -2,7 +2,7 @@ import { Application } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { bookRouter } from './book';
 import { genreRouter } from './genre';
-import { healthcheckRouter } from './helthcheck';
+import { healthcheckRouter } from './healthcheck';
 import { getApolloMiddleware } from './graphql';
 import { errorMiddleware } from '../middlewares';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';

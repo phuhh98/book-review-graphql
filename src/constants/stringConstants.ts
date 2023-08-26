@@ -20,4 +20,10 @@ export const MODEL_ALIAS = {
   Genre: 'Genre',
   GenreBookRel: 'GenreBookRel',
   Image: 'Image',
+  Profile: 'Profile',
+  Author: 'Author',
+  User: 'User',
+  AuthorBookRel: 'AuthorBookRel',
 };
+
+export const ALLOW_IMAGE_EXT = ['.jpeg', '.png'];
