@@ -51,6 +51,7 @@ export default class GenreService implements IGenreService {
       .updateOne(
         { _id: createMongoObjectIdFromString(genreId.toString()) },
         { ...updateData },
+        { runValidators: true },
       )
       .session(await this.getTransactionSession());
   }

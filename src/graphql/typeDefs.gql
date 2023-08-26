@@ -14,6 +14,9 @@ type Query {
   "Get a book's detail by its id"
   bookById(id: ID!): Book!
 
+  "Get the most recent published book with an optional offset. Default maxItems is 10 and default offet is 0"
+  booksPublishedLatest(maxItems: Int, offset: Int): [Book!]!
+
   "Get a list of genres by search with its name which contains the provied string"
   genresByName(name: String!): [Genre]!
 

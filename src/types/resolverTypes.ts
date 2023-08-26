@@ -113,6 +113,8 @@ export type Query = {
   bookById: Book;
   /** Get a list of books by search with its title which contains the provided string */
   booksByTitle: Array<Maybe<Book>>;
+  /** Get the most recent published book with an optional offset. Default maxItems is 10 and default offet is 0 */
+  booksPublishedLatest: Array<Book>;
   /** Get a genre's details by its id */
   genreById: Genre;
   /** Get a list of genres by search with its name which contains the provied string */
@@ -125,6 +127,11 @@ export type QueryBookByIdArgs = {
 
 export type QueryBooksByTitleArgs = {
   title: Scalars['String']['input'];
+};
+
+export type QueryBooksPublishedLatestArgs = {
+  maxItems?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type QueryGenreByIdArgs = {
@@ -240,6 +247,7 @@ export type ResolversTypes = ResolversObject<{
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Genre: ResolverTypeWrapper<GenreData>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -258,6 +266,7 @@ export type ResolversParentTypes = ResolversObject<{
   Float: Scalars['Float']['output'];
   Genre: GenreData;
   ID: Scalars['ID']['output'];
+  Int: Scalars['Int']['output'];
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
@@ -359,6 +368,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryBooksByTitleArgs, 'title'>
+  >;
+  booksPublishedLatest?: Resolver<
+    Array<ResolversTypes['Book']>,
+    ParentType,
+    ContextType,
+    Partial<QueryBooksPublishedLatestArgs>
   >;
   genreById?: Resolver<
     ResolversTypes['Genre'],
