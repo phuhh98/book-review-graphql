@@ -10,7 +10,7 @@ export default class UserService implements IUserService {
 
   async addOne(userData: UserDataAfterPopulated): Promise<UserData | null> {
     const userProfile = new this.profileModel(userData.profile);
-    userProfile.save({ session: await this.getProfileTransactionSession() });
+    await userProfile.save({ session: await this.getProfileTransactionSession() });
 
     const newUser = new this.userModel({
       email: userData.email,
@@ -42,10 +42,10 @@ export default class UserService implements IUserService {
     // If no profile attach => create a profile and attach to the user
     if (!userRecord.profile) {
       const userProfile = new this.profileModel(profileData);
-      userProfile.save({ session: await this.getProfileTransactionSession() });
+      await userProfile.save({ session: await this.getProfileTransactionSession() });
 
       userRecord.profile = userProfile._id;
-      userRecord.save({ session: await this.getUserModelTransactionSession() });
+      await userRecord.save({ session: await this.getUserModelTransactionSession() });
       return;
     }
 

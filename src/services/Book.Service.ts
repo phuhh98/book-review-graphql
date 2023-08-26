@@ -192,13 +192,16 @@ export default class BookService implements IBookService {
     );
   }
 
-  async getLastestBooks(maxItems?: number | string, offset?: number | string) {
+  async getLastestBooks(maxItems: number | string = 10, offset: number | string = 0) {
     const DEFAULT_MAX_ITEMS = 10;
     const DEAFAULT_OFFSET = 0;
-    maxItems = maxItems
-      ? parseInt(maxItems.toString()) ?? DEFAULT_MAX_ITEMS
+    maxItems = !Number.isNaN(parseInt(maxItems.toString()))
+      ? parseInt(maxItems.toString())
+      : DEAFAULT_OFFSET;
+
+    offset = !Number.isNaN(parseInt(offset.toString()))
+      ? parseInt(offset.toString())
       : DEFAULT_MAX_ITEMS;
-    offset = offset ? parseInt(offset.toString()) ?? DEAFAULT_OFFSET : DEAFAULT_OFFSET;
 
     const books = await this.bookModel.find(
       {},
