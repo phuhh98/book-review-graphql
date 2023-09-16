@@ -5,7 +5,6 @@ import { AuthorBookRelModel, ProfileModel } from '..';
 
 const AuthorSchema = new Schema<AuthorData>(
   {
-    bio: String,
     linked_user: {
       type: Types.ObjectId,
       ref: MODEL_ALIAS.User,
@@ -18,7 +17,11 @@ const AuthorSchema = new Schema<AuthorData>(
     },
   },
   {
+    timestamps: true,
     toJSON: {
+      virtuals: true,
+    },
+    toObject: {
       virtuals: true,
     },
   },
@@ -26,14 +29,12 @@ const AuthorSchema = new Schema<AuthorData>(
 
 // clear relations on delete
 AuthorSchema.pre<AuthorData>('deleteOne', async function (next) {
-  const authorCurrent = this;
-
-  AuthorBookRelModel.deleteMany({
-    bookId: new Types.ObjectId(authorCurrent._id),
+  await AuthorBookRelModel.deleteMany({
+    bookId: new Types.ObjectId(this._id),
   }).session(await AuthorBookRelModel.startSession());
 
   // Clrear Profile when delete
-  ProfileModel.deleteOne({ _id: new Types.ObjectId(authorCurrent.profile) }).session(
+  await ProfileModel.deleteOne({ _id: new Types.ObjectId(this.profile) }).session(
     await ProfileModel.startSession(),
   );
   next();

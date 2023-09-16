@@ -5,7 +5,10 @@ import { ProfileModel } from '..';
 
 const UserSchema = new Schema<UserData>(
   {
-    email: String,
+    email: {
+      type: String,
+      unique: true,
+    },
     profile: {
       type: Types.ObjectId,
       ref: MODEL_ALIAS.Profile,
@@ -13,7 +16,11 @@ const UserSchema = new Schema<UserData>(
     },
   },
   {
+    timestamps: true,
     toJSON: {
+      virtuals: true,
+    },
+    toObject: {
       virtuals: true,
     },
   },
@@ -21,10 +28,8 @@ const UserSchema = new Schema<UserData>(
 
 // clear relations on delete
 UserSchema.pre<UserData>('deleteOne', async function (next) {
-  const userCurrent = this;
-
   // Clrear Profile when delete
-  ProfileModel.deleteOne({ _id: new Types.ObjectId(userCurrent.profile) });
+  await ProfileModel.deleteOne({ _id: new Types.ObjectId(this.profile) });
   next();
 });
 

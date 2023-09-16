@@ -36,12 +36,12 @@ export interface GenreBookRelData extends Timestamp, GeneralId {
 export interface ProfileData extends Timestamp, GeneralId {
   first_name: string;
   last_name: string;
-  date_of_birth?: Date;
+  date_of_birth?: Date | string;
   profile_picture?: OdmID;
+  bio?: string;
 }
 
 export interface AuthorData extends Timestamp, GeneralId {
-  bio?: string;
   linked_user?: OdmID;
   profile?: OdmID;
 }
@@ -64,5 +64,5 @@ export interface UserData extends Timestamp, GeneralId {
 
 export interface UserDataAfterPopulated extends Timestamp, GeneralId {
   email: string;
-  profile?: ProfileData;
+  profile: ProfileData;
 }

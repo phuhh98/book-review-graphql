@@ -1,8 +1,8 @@
-import { IGenreService, GenreData, BookData, GenreBookRelData } from '../types';
+import { GenreData, BookData, GenreBookRelData } from '../types';
 import { Model, isValidObjectId } from 'mongoose';
 import { createMongoObjectIdFromString } from '../utils';
 
-export default class GenreService implements IGenreService {
+export default class GenreService {
   constructor(
     private genreModel: Model<GenreData>,
     private bookModel: Model<BookData>,

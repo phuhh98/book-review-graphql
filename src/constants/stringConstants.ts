@@ -16,14 +16,14 @@ export const REST_PATH = {
 };
 
 export const MODEL_ALIAS = {
-  Book: 'Book',
-  Genre: 'Genre',
-  GenreBookRel: 'GenreBookRel',
-  Image: 'Image',
-  Profile: 'Profile',
-  Author: 'Author',
-  User: 'User',
-  AuthorBookRel: 'AuthorBookRel',
+  Book: 'book',
+  Genre: 'genre',
+  GenreBookRel: 'genreBookRel',
+  Image: 'image',
+  Profile: 'profiles',
+  Author: 'author',
+  User: 'user',
+  AuthorBookRel: 'authorBookRel',
 };
 
 export const ALLOW_IMAGE_EXT = ['.jpeg', '.png'];

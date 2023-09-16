@@ -1,14 +1,8 @@
-import {
-  AuthorData,
-  ProfileData,
-  IAuthorService,
-  AuthorDataAfterPopulated,
-  UserData,
-} from '../types';
+import { AuthorData, ProfileData, AuthorDataAfterPopulated, UserData } from '../types';
 import { Model, isValidObjectId } from 'mongoose';
 import { createMongoObjectIdFromString } from '../utils';
 
-export default class AuthorService implements IAuthorService {
+export default class AuthorService {
   constructor(
     private authorModel: Model<AuthorData>,
     private profileModel: Model<ProfileData>,

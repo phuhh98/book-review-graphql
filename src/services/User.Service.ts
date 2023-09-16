@@ -1,37 +1,54 @@
-import { IUserService, UserData, ProfileData, UserDataAfterPopulated } from '../types';
+import { UserData, ProfileData, UserDataAfterPopulated } from '../types';
 import { Model, isValidObjectId } from 'mongoose';
 import { createMongoObjectIdFromString } from '../utils';
 
-export default class UserService implements IUserService {
+export default class UserService {
   constructor(
     private userModel: Model<UserData>,
     private profileModel: Model<ProfileData>,
   ) {}
 
-  async addOne(userData: UserDataAfterPopulated): Promise<UserData | null> {
+  async addOne(userData: {
+    email: string;
+    profile: Omit<ProfileData, 'createdAt' | 'updatedAt' | '_id'>;
+  }): Promise<UserDataAfterPopulated | null> {
     const userProfile = new this.profileModel(userData.profile);
     await userProfile.save({ session: await this.getProfileTransactionSession() });
 
     const newUser = new this.userModel({
       email: userData.email,
+      profile: userProfile._id,
     });
 
-    await newUser.save({ session: await this.getUserModelTransactionSession() });
+    try {
+      await newUser.save({ session: await this.getUserModelTransactionSession() });
+    } catch (err) {
+      await this.profileModel.deleteOne({ _id: userProfile._id });
+      throw err;
+    }
 
-    return newUser;
+    return (await newUser.populate('profile')) as unknown as UserDataAfterPopulated;
   }
 
-  async getOneById(userId: UserData['_id'] | string): Promise<UserData | null> {
+  async getOneById(
+    userId: UserData['_id'] | string,
+  ): Promise<UserDataAfterPopulated | null> {
     this.checkUserIdValidOrThrowError(userId);
     const userRecord = await this.userModel.findById(userId);
 
-    return userRecord;
+    return userRecord ? userRecord.populate('profile') : null;
+  }
+
+  async getOneByEmail(email: UserData['email']): Promise<UserDataAfterPopulated | null> {
+    const userRecord = await this.userModel.findOne({ email });
+
+    return userRecord ? userRecord.populate('profile') : null;
   }
 
   async updateProfileById(
     userId: UserData['_id'] | string,
-    profileData: UserDataAfterPopulated['profile'],
-  ): Promise<void> {
+    profileData: Partial<UserDataAfterPopulated['profile']>,
+  ): Promise<UserDataAfterPopulated | null> {
     this.checkUserIdValidOrThrowError(userId);
 
     const userRecord = await this.userModel.findById(userId);
@@ -46,17 +63,21 @@ export default class UserService implements IUserService {
 
       userRecord.profile = userProfile._id;
       await userRecord.save({ session: await this.getUserModelTransactionSession() });
-      return;
+      return userRecord.populate('profile');
     }
 
     // if profile exist, update it .
     await this.profileModel
-      .updateOne(
+      .findOneAndUpdate(
         { _id: createMongoObjectIdFromString(userRecord.profile.toString()) },
         { ...profileData },
         { runValidators: true },
       )
       .session(await this.getProfileTransactionSession());
+
+    const updatedUserRecord = await this.userModel.findById(userId);
+
+    return updatedUserRecord ? updatedUserRecord.populate('profile') : null;
   }
 
   private async getUserModelTransactionSession() {
