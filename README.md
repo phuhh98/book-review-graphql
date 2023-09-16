@@ -7,7 +7,7 @@ Pull docker image from [docker hub](https://hub.docker.com/repository/docker/phu
 Run below command to run docker image and map port
 
 ```bash
-docker run -i phuhh98/book-review-graphql-be:local_run_latest  -p 8080:8080
+docker run -p 8080:8080 phuhh98/book-review-graphql-be:local_run_latest
 ```
 
 ---
