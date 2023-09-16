@@ -2,31 +2,12 @@
 
 ## Run in local machine
 
-You can run your local machine with prerequisite of an installed or cloud uri for mongodb.
+Pull docker image from [docker hub](https://hub.docker.com/repository/docker/phuhh98/book-review-graphql-be/tags?page=1&ordering=last_updated) with tag local_run_latest
 
-- Create a .env file in the root folder with the following variables
-
-```bash
-ENV=DEV
-
-SERVER_PORT=6969
-
-MONGODB_URL=mongodb://127.0.0.1:27017/
-MONGODB_DBNAME=book-review-db
-MONGODB_USER=root
-MONGODB_PASSWORD=example
-
-CLUSTER_MODE='off'
-```
-
-## Run with docker
-
-- Prerequisite with a installed and running docker daemon.
-
-- Run the following command in the in the root folder to start the dev server.
+Run below command to run docker image and map port
 
 ```bash
-docker compose up &
+docker run -i phuhh98/book-review-graphql-be:local_run_latest  -p 8080:8080
 ```
 
 ---

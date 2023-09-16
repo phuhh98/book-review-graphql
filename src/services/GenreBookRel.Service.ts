@@ -15,7 +15,7 @@ export default class GenreBookRelService {
     this.checkIdPairValidOrThrowError(bookId, genreId);
 
     const book = await this.bookModel.findOne({ _id: new Types.ObjectId(bookId) });
-    const genre = await this.genreModel.findOne({ _id: new Types.ObjectId(bookId) });
+    const genre = await this.genreModel.findOne({ _id: new Types.ObjectId(genreId) });
 
     if (!book) {
       throw new Error('book not found');
