@@ -25,6 +25,7 @@ const BookSchema = new Schema<BookData>(
     publisher: String,
   },
   {
+    timestamps: true,
     toJSON: {
       virtuals: true,
     },
@@ -33,21 +34,19 @@ const BookSchema = new Schema<BookData>(
 
 // clear relations on delete
 BookSchema.pre<BookData>('deleteOne', async function (next) {
-  const bookCurrent = this;
-
   // clear book in genres when book is deleted
-  GenreBookRelModel.deleteMany({
-    bookId: createMongoObjectIdFromString(bookCurrent._id.toString()),
+  await GenreBookRelModel.deleteMany({
+    bookId: createMongoObjectIdFromString(this._id.toString()),
   }).session(await GenreBookRelModel.startSession());
 
-  AuthorBookRelModel.deleteMany({
-    bookId: createMongoObjectIdFromString(bookCurrent._id.toString()),
+  await AuthorBookRelModel.deleteMany({
+    bookId: createMongoObjectIdFromString(this._id.toString()),
   }).session(await GenreBookRelModel.startSession());
 
   // clear Image in GridFs when delete
-  if (bookCurrent.cover_image) {
-    ImageGridFsBucket.delete(
-      createMongoObjectIdFromString(bookCurrent.cover_image.toString()),
+  if (this.cover_image) {
+    await ImageGridFsBucket.delete(
+      createMongoObjectIdFromString(this.cover_image.toString()),
     );
   }
 

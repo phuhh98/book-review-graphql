@@ -19,6 +19,7 @@ const GenreSchema = new Schema<GenreData>(
     description: String,
   },
   {
+    timestamps: true,
     toJSON: {
       virtuals: true,
     },

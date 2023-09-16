@@ -22,8 +22,10 @@ const ProfileSchema = new Schema<ProfileData>(
       transform: (_: unknown, value: Date) => moment(value).format('DD/MM/YYYY'),
     },
     profile_picture: Types.ObjectId,
+    bio: String,
   },
   {
+    timestamps: true,
     toJSON: {
       virtuals: true,
     },
@@ -32,14 +34,12 @@ const ProfileSchema = new Schema<ProfileData>(
 
 // clear relations on delete
 ProfileSchema.pre<ProfileData>('deleteOne', async function (next) {
-  const profileCurrent = this;
-
   // Placeholder for delete author / user IF profile is deleted
 
   // clear Image in GridFs when delete
-  if (profileCurrent.profile_picture) {
-    ImageGridFsBucket.delete(
-      createMongoObjectIdFromString(profileCurrent.profile_picture.toString()),
+  if (this.profile_picture) {
+    await ImageGridFsBucket.delete(
+      createMongoObjectIdFromString(this.profile_picture.toString()),
     );
   }
 

@@ -44,12 +44,16 @@ export abstract class IGenreBookRelService {
 }
 
 export abstract class IUserService {
-  abstract addOne(userData: UserDataAfterPopulated): Promise<UserData | null>;
-  abstract getOneById(userId: UserData['_id'] | string): Promise<UserData | null>;
+  abstract addOne(
+    userData: UserDataAfterPopulated,
+  ): Promise<UserDataAfterPopulated | null>;
+  abstract getOneById(
+    userId: UserData['_id'] | string,
+  ): Promise<UserDataAfterPopulated | null>;
   abstract updateProfileById(
     userId: UserData['_id'] | string,
     profileData: UserDataAfterPopulated['profile'],
-  ): Promise<void>;
+  ): Promise<UserDataAfterPopulated | null>;
 }
 
 export abstract class IAuthorService {

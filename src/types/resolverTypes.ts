@@ -75,13 +75,19 @@ export type Mutation = {
   createBook: Book;
   /** Create a new Genre record */
   createGenre: Genre;
+  /** Create a user's profile */
+  createUserProfile: User;
   /** Remove Genre - Book relation */
   removeBookFromGenre: Genre;
+  /** Update a user's profile */
+  updateUserProfile: User;
   /**
    * Upload a book's cover_image which contain in a multipart/form-data
    * need to provide a non-empty value for one of the following headers: x-apollo-operation-name, apollo-require-preflight
    */
   uploadBookCoverImage?: Maybe<UploadResult>;
+  /** Upload user profile picture */
+  uploadUserProfilePicture: ProfilePictureUploadResult;
 };
 
 export type MutationAddBookToGenreArgs = {
@@ -102,14 +108,42 @@ export type MutationCreateGenreArgs = {
   name: Scalars['String']['input'];
 };
 
+export type MutationCreateUserProfileArgs = {
+  bio?: InputMaybe<Scalars['String']['input']>;
+  date_of_birth?: InputMaybe<Scalars['Date']['input']>;
+  email: Scalars['String']['input'];
+  first_name: Scalars['String']['input'];
+  last_name: Scalars['String']['input'];
+};
+
 export type MutationRemoveBookFromGenreArgs = {
   bookId: Scalars['ID']['input'];
   genreId: Scalars['ID']['input'];
 };
 
+export type MutationUpdateUserProfileArgs = {
+  bio?: InputMaybe<Scalars['String']['input']>;
+  date_of_birth?: InputMaybe<Scalars['Date']['input']>;
+  first_name?: InputMaybe<Scalars['String']['input']>;
+  last_name?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['ID']['input'];
+};
+
 export type MutationUploadBookCoverImageArgs = {
   bookId: Scalars['ID']['input'];
   cover_image: Scalars['Upload']['input'];
+};
+
+export type MutationUploadUserProfilePictureArgs = {
+  profile_picture: Scalars['Upload']['input'];
+  userId: Scalars['ID']['input'];
+};
+
+export type ProfilePictureUploadResult = {
+  __typename?: 'ProfilePictureUploadResult';
+  message?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+  user?: Maybe<User>;
 };
 
 export type Query = {
@@ -124,6 +158,8 @@ export type Query = {
   genreById: Genre;
   /** Get a list of genres by search with its name which contains the provied string */
   genresByName: Array<Maybe<Genre>>;
+  /** Get user profile by email */
+  userProfileByEmail: User;
 };
 
 export type QueryBookByIdArgs = {
@@ -147,11 +183,29 @@ export type QueryGenresByNameArgs = {
   name: Scalars['String']['input'];
 };
 
+export type QueryUserProfileByEmailArgs = {
+  email: Scalars['String']['input'];
+};
+
 export type UploadResult = {
   __typename?: 'UploadResult';
   book?: Maybe<Book>;
   message?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
+};
+
+/** User data representation */
+export type User = {
+  __typename?: 'User';
+  bio?: Maybe<Scalars['String']['output']>;
+  created_at: Scalars['Date']['output'];
+  date_of_birth?: Maybe<Scalars['Date']['output']>;
+  email: Scalars['String']['output'];
+  first_name?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  last_name?: Maybe<Scalars['String']['output']>;
+  profile_picture?: Maybe<Scalars['URI']['output']>;
+  updated_at: Scalars['Date']['output'];
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -254,6 +308,9 @@ export type ResolversTypes = ResolversObject<{
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
+  ProfilePictureUploadResult: ResolverTypeWrapper<
+    Omit<ProfilePictureUploadResult, 'user'> & { user?: Maybe<ResolversTypes['User']> }
+  >;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   URI: ResolverTypeWrapper<Scalars['URI']['output']>;
@@ -261,6 +318,7 @@ export type ResolversTypes = ResolversObject<{
   UploadResult: ResolverTypeWrapper<
     Omit<UploadResult, 'book'> & { book?: Maybe<ResolversTypes['Book']> }
   >;
+  User: ResolverTypeWrapper<UserDataAfterPopulated>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -273,6 +331,9 @@ export type ResolversParentTypes = ResolversObject<{
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Mutation: {};
+  ProfilePictureUploadResult: Omit<ProfilePictureUploadResult, 'user'> & {
+    user?: Maybe<ResolversParentTypes['User']>;
+  };
   Query: {};
   String: Scalars['String']['output'];
   URI: Scalars['URI']['output'];
@@ -280,6 +341,7 @@ export type ResolversParentTypes = ResolversObject<{
   UploadResult: Omit<UploadResult, 'book'> & {
     book?: Maybe<ResolversParentTypes['Book']>;
   };
+  User: UserDataAfterPopulated;
 }>;
 
 export type BookResolvers<
@@ -344,11 +406,23 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationCreateGenreArgs, 'name'>
   >;
+  createUserProfile?: Resolver<
+    ResolversTypes['User'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateUserProfileArgs, 'email' | 'first_name' | 'last_name'>
+  >;
   removeBookFromGenre?: Resolver<
     ResolversTypes['Genre'],
     ParentType,
     ContextType,
     RequireFields<MutationRemoveBookFromGenreArgs, 'bookId' | 'genreId'>
+  >;
+  updateUserProfile?: Resolver<
+    ResolversTypes['User'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateUserProfileArgs, 'userId'>
   >;
   uploadBookCoverImage?: Resolver<
     Maybe<ResolversTypes['UploadResult']>,
@@ -356,6 +430,23 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationUploadBookCoverImageArgs, 'bookId' | 'cover_image'>
   >;
+  uploadUserProfilePicture?: Resolver<
+    ResolversTypes['ProfilePictureUploadResult'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationUploadUserProfilePictureArgs, 'profile_picture' | 'userId'>
+  >;
+}>;
+
+export type ProfilePictureUploadResultResolvers<
+  ContextType = GraphqlContext,
+  ParentType extends
+    ResolversParentTypes['ProfilePictureUploadResult'] = ResolversParentTypes['ProfilePictureUploadResult'],
+> = ResolversObject<{
+  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<
@@ -392,6 +483,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGenresByNameArgs, 'name'>
   >;
+  userProfileByEmail?: Resolver<
+    ResolversTypes['User'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryUserProfileByEmailArgs, 'email'>
+  >;
 }>;
 
 export interface UriScalarConfig
@@ -415,13 +512,31 @@ export type UploadResultResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type UserResolvers<
+  ContextType = GraphqlContext,
+  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User'],
+> = ResolversObject<{
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  created_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  date_of_birth?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  first_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  last_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  profile_picture?: Resolver<Maybe<ResolversTypes['URI']>, ParentType, ContextType>;
+  updated_at?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
   Book?: BookResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Genre?: GenreResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  ProfilePictureUploadResult?: ProfilePictureUploadResultResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   URI?: GraphQLScalarType;
   Upload?: GraphQLScalarType;
   UploadResult?: UploadResultResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 }>;

@@ -22,6 +22,9 @@ type Query {
 
   "Get a genre's details by its id"
   genreById(id: ID!): Genre!
+
+  "Get user profile by email"
+  userProfileByEmail(email: String!): User!
 }
 
 type Mutation {
@@ -47,6 +50,30 @@ type Mutation {
   need to provide a non-empty value for one of the following headers: x-apollo-operation-name, apollo-require-preflight
   """
   uploadBookCoverImage(cover_image: Upload!, bookId: ID!): UploadResult
+
+  "Create a user's profile"
+  createUserProfile(
+    email: String!
+    first_name: String!
+    last_name: String!
+    date_of_birth: Date
+    bio: String
+  ): User!
+
+  "Update a user's profile"
+  updateUserProfile(
+    userId: ID!
+    first_name: String
+    last_name: String
+    date_of_birth: Date
+    bio: String
+  ): User!
+
+  "Upload user profile picture"
+  uploadUserProfilePicture(
+    profile_picture: Upload!
+    userId: ID!
+  ): ProfilePictureUploadResult!
 }
 
 type UploadResult {
@@ -55,17 +82,25 @@ type UploadResult {
   book: Book
 }
 
-# "User data representation"
-# type User {
-#   id: ID!
-#   full_name: String
-#   email: String!
-#   date_of_birth: Date
-#   avatar: URI
-#   read_books: [Book]!
-#   created_at: Date!
-#   updated_at: Date!
-# }
+type ProfilePictureUploadResult {
+  success: Boolean!
+  message: String
+  user: User
+}
+
+"User data representation"
+type User {
+  id: ID!
+  first_name: String
+  last_name: String
+  email: String!
+  date_of_birth: Date
+  profile_picture: URI
+  bio: String
+  # read_books: [Book]!
+  created_at: Date!
+  updated_at: Date!
+}
 
 # "Author data representation"
 # type Author {
