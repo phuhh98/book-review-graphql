@@ -25,7 +25,7 @@ jobs:
           envs_format: 'export {NAME}={VALUE}'
           script: |
             cd ~/projects/book-review-graphql-BE/ &&
-            echo $BRANCH_NAME &&
+            echo "BRANCH_NAME FROM OUTER" $BRANCH_NAME &&
             git pull origin $BRANCH_NAME &&
             bash -s < .github/workflows/script.sh
             SCRIPT_STATUS=$? &&
