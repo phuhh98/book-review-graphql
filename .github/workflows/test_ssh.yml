@@ -24,7 +24,7 @@ jobs:
           debug: true
           envs_format: 'export {NAME}={VALUE}'
           script: |
-            cd ~/book-review-graphql-BE/ &&
+            cd ~/projects/book-review-graphql-BE/ &&
             echo $BRANCH_NAME &&
             bash -s < .github/workflows/script.sh
             SCRIPT_STATUS=$? &&
