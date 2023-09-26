@@ -7,7 +7,7 @@ on:
 jobs:
   deploy:
     name: ssh deploy
-    environment: master
+    environment: test_ec2
     runs-on: ubuntu-latest
     steps:
       - name: ssh connect
@@ -17,7 +17,7 @@ jobs:
           SERVER_NAME: ${{ vars.SERVER_NAME }}
           APP_UNDER_MAINTAINANCE: ${{vars.APP_UNDER_MAINTAINANCE}}
         with:
-          host: ${{secrets.SSH_HOST}}
+          host: ${{ secrets.SSH_HOST }}
           username: ${{secrets.SSH_USER_NAME}}
           key: ${{secrets.SSH_PRIVATE_KEY}}
           allenvs: true
