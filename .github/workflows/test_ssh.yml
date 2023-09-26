@@ -21,6 +21,7 @@ jobs:
           username: ${{secrets.SSH_USER_NAME}}
           key: ${{secrets.SSH_PRIVATE_KEY}}
           allenvs: true
+          debug: true
           envs_format: 'export {NAME}={VALUE}'
           script: |
             cd ~/book-review-graphql-BE/ &&
