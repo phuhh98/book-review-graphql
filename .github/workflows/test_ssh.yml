@@ -24,9 +24,9 @@ jobs:
           debug: true
           envs_format: 'export {NAME}={VALUE}'
           script: |
-            cd ~/projects/book-review-graphql-BE/ &&
-            echo "BRANCH_NAME FROM OUTER" $BRANCH_NAME &&
-            git pull origin $BRANCH_NAME &&
+            cd ~/projects/book-review-graphql-BE/ 
+            echo "BRANCH_NAME FROM OUTER" $BRANCH_NAME 
+            git pull origin $BRANCH_NAME 
             bash -s < .github/workflows/script.sh
-            SCRIPT_STATUS=$? &&
+            SCRIPT_STATUS=$?
             if [[ $SCRIP_STATUS != 0 ]]; then exit $DEPLOYMENT_STATUS ; fi
