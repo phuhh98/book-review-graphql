@@ -1,14 +1,14 @@
-echo "BRANCH_NAME" $BRANCH_NAME
-echo "SERVER_NAME" $SERVER_NAME
-echo "APP_UNDER_MAINTAINANCE" $APP_UNDER_MAINTAINANCE
+echo "BRANCH_NAME" $INPUT_BRANCH_NAME
+echo "SERVER_NAME" $INPUT_SERVER_NAME
+echo "APP_UNDER_MAINTAINANCE" $INPUT_APP_UNDER_MAINTAINANCE
 
 cd ~/projects/book-review-graphql-BE/
 
-git checkout $BRANCH_NAME
+git checkout $INPUT_BRANCH_NAME
 git reset --hard HEAD
-git pull origin $BRANCH_NAME
+git pull origin $INPUT_BRANCH_NAME
 
-if [[ $BRANCH_NAME != *"master"* ]];
+if [[ $INPUT_BRANCH_NAME != *"master"* ]];
 then
 	exit 1
 else
