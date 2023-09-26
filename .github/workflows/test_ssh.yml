@@ -13,17 +13,15 @@ jobs:
       - name: ssh connect
         uses: appleboy/ssh-action@v1.0.0
         env:
-          BRANCH_NAME: ${{ vars.BRANCH_NAME }}
-          SERVER_NAME: ${{ vars.SERVER_NAME }}
-          APP_UNDER_MAINTAINANCE: ${{vars.APP_UNDER_MAINTAINANCE}}
+          BRANCH_NAME: ${{ vars.INPUT_BRANCH_NAME }}
+          SERVER_NAME: ${{ vars.INPUT_SERVER_NAME }}
+          APP_UNDER_MAINTAINANCE: ${{vars.INPUT_APP_UNDER_MAINTAINANCE}}
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{secrets.SSH_USER_NAME}}
-          key: ${{secrets.SSH_PRIVATE_KEY}}
-        #   allenvs: true
-          envs: BRANCH_NAME,SERVER_NAME,APP_UNDER_MAINTAINANCE
+          host: ${{ secrets.INPUT_SSH_HOST }}
+          username: ${{secrets.INPUT_SSH_USER_NAME}}
+          key: ${{secrets.INPUT_SSH_PRIVATE_KEY}}
+          allenvs: true
           debug: true
-        #   envs_format: 'export {NAME}={VALUE}'
           script: |
             cd ~/projects/book-review-graphql-BE/ 
             echo "BRANCH_NAME FROM OUTER" $BRANCH_NAME 
