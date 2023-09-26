@@ -13,9 +13,9 @@ jobs:
       - name: ssh connect
         uses: appleboy/ssh-action@v1.0.0
         env:
-          BRANCH_NAME: ${{ vars.INPUT_BRANCH_NAME }}
-          SERVER_NAME: ${{ vars.INPUT_SERVER_NAME }}
-          APP_UNDER_MAINTAINANCE: ${{vars.INPUT_APP_UNDER_MAINTAINANCE}}
+          INPUT_BRANCH_NAME: ${{ vars.INPUT_BRANCH_NAME }}
+          INPUT_SERVER_NAME: ${{ vars.INPUT_SERVER_NAME }}
+          INPUT_APP_UNDER_MAINTAINANCE: ${{vars.INPUT_APP_UNDER_MAINTAINANCE}}
         with:
           host: ${{ secrets.INPUT_SSH_HOST }}
           username: ${{secrets.INPUT_SSH_USER_NAME}}
