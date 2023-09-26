@@ -1,0 +1,30 @@
+name: dev_sync deployment to ec2
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    name: ssh deploy
+    environment: master
+    runs-on: ubuntu-latest
+    steps:
+      - name: ssh connect
+        uses: appleboy/ssh-action@v1.0.0
+        env:
+          BRANCH_NAME: ${{ vars.BRANCH_NAME }}
+          SERVER_NAME: ${{ vars.SERVER_NAME }}
+          APP_UNDER_MAINTAINANCE: ${{vars.APP_UNDER_MAINTAINANCE}}
+        with:
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USER_NAME}}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          allenvs: true
+          envs_format: 'export {NAME}={VALUE}'
+          script: |
+            cd ~/book-review-graphql-BE/ &&
+            echo $BRANCH_NAME &&
+            bash -s < .github/workflows/script.sh
+            SCRIPT_STATUS=$? &&
+            if [[ $SCRIP_STATUS != 0 ]]; then exit $DEPLOYMENT_STATUS ; fi
