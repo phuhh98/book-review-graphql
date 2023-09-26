@@ -20,7 +20,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{secrets.SSH_USER_NAME}}
           key: ${{secrets.SSH_PRIVATE_KEY}}
-          allenvs: true
+        #   allenvs: true
+          envs: BRANCH_NAME,SERVER_NAME,APP_UNDER_MAINTAINANCE
           debug: true
         #   envs_format: 'export {NAME}={VALUE}'
           script: |
