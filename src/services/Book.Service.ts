@@ -203,11 +203,58 @@ export default class BookService {
       ? parseInt(offset.toString())
       : DEFAULT_MAX_ITEMS;
 
-    const books = await this.bookModel.find(
-      {},
-      {},
-      { sort: { publish_date: 'desc' }, limit: maxItems, skip: offset },
-    );
+    // const books = await this.bookModel.find(
+    //   {},
+    //   {},
+    //   { sort: { publish_date: 'desc' }, limit: maxItems, skip: offset },
+    // );
+	const books= this.bookModel.aggregate(
+	[
+		{ $sort: { publish_date: -1 } },
+		{ $limit: maxItems },
+		{ $skip: offset },
+		{
+			$lookup: {
+				from: this.GBLModel.collection.name,
+				let: { idFromFoundBook: '$_id' },
+				pipeline: [
+				{
+					$match: {
+					$expr: { $eq: ['$$idFromFoundBook', '$bookId'] },
+					},
+				},
+				{
+					$lookup: {
+					from: this.genreModel.collection.name,
+					let: { genreIdFromGBL: '$genreId' },
+					pipeline: [
+						{
+						$match: {
+							$expr: { $eq: ['$_id', '$$genreIdFromGBL'] },
+						},
+						},
+						{
+						$sort: {
+							name: 1,
+						},
+						},
+					],
+					as: 'genreNodeFromGenre',
+					},
+				},
+				{ $unwind: '$genreNodeFromGenre' },
+				{
+					$replaceRoot: {
+					newRoot: '$genreNodeFromGenre',
+					},
+				},
+				],
+				as: 'genres',
+			},
+		},
+	  ], {
+		session: await this.bookModel.startSession()
+	  })
     return books;
   }
 
