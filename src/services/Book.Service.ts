@@ -208,7 +208,7 @@ export default class BookService {
     //   {},
     //   { sort: { publish_date: 'desc' }, limit: maxItems, skip: offset },
     // );
-	const books= this.bookModel.aggregate(
+	return await this.bookModel.aggregate(
 	[
 		{ $sort: { publish_date: -1 } },
 		{ $limit: maxItems },
@@ -255,7 +255,6 @@ export default class BookService {
 	  ], {
 		session: await this.bookModel.startSession()
 	  })
-    return books;
   }
 
   checkBookIdValidOrThrowError(bookId: BookData['_id'] | string) {
